@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "title": "fotonoza - minimalistyczny edytor zdjęć",
+    "description": "Darmowy i open source edytor zdjęć dla zaangażowanych amatorów i freelancerów, którzy chcą obrabiać szybciej tylko na kluczowych narzędziach."
+  },
+  "nav": {
+    "features": "Wybrane funkcje",
+    "allFeatures": "Wszystkie funkcje",
+    "download": "Pobierz"
+  },
+  "hero": {
+    "headline": "Edytuj zdjęcia w tempie swoich pomysłów.",
+    "tagline": "fotonoza pomaga szybko przerabiać setki lub tysiące zdjęć miesięcznie, używając tylko narzędzi, które naprawdę są potrzebne.",
+    "cta": "Przejdź do pobierania",
+    "imageAlt": "Podgląd edytora zdjęć"
+  },
+  "someFeatures": {
+    "title": "Wybrane funkcje",
+    "subtitle": "Stworzone pod szybkie sesje, nie szukanie opcji.",
+    "items": [
+      "Szybka korekta ekspozycji, kontrastu i balansu bieli.",
+      "Proste kadrowanie, obrót i prostowanie zdjęć.",
+      "Lokalna praca bez uzależnienia od chmury.",
+      "Presety łatwe do zrozumienia i edycji.",
+      "Eksport wsadowy w jednym czystym panelu.",
+      "Skróty klawiaturowe do powtarzalnych zadań."
+    ]
+  },
+  "allFeatures": {
+    "title": "Wszystkie funkcje",
+    "subtitle": "Kompaktowy zestaw 25 najważniejszych narzędzi.",
+    "items": [
+      "Podgląd RAW",
+      "Suwak ekspozycji",
+      "Regulacja kontrastu",
+      "Balans bieli",
+      "Odzysk świateł",
+      "Podniesienie cieni",
+      "Krzywa tonalna",
+      "Temperatura barwowa",
+      "Balans tinty",
+      "Podstawowe HSL",
+      "Presety kadru",
+      "Prostowanie horyzontu",
+      "Korekcja obiektywu",
+      "Kontrola winiety",
+      "Redukcja szumu",
+      "Wyostrzanie detali",
+      "Usuwanie plamek",
+      "Masowa zmiana nazw",
+      "Stosy presetów",
+      "Porównanie obok siebie",
+      "Kolejka eksportu",
+      "Eksport web",
+      "Eksport wydruku",
+      "Synchronizacja metadanych",
+      "Workflow klawiaturowy"
+    ],
+    "descriptions": [
+      "Szybki podgląd detali źródła przed edycją.",
+      "Ustaw jasność precyzyjnie jednym suwakiem.",
+      "Wzmocnij separację tonów dla lepszej czytelności.",
+      "Usuń dominantę kolorystyczną jednym ruchem.",
+      "Odzyskaj jasne partie nieba i odbicia światła.",
+      "Podnieś cienie bez utraty naturalnej głębi.",
+      "Modeluj kontrast dokładnie w wybranych tonach.",
+      "Ocieplaj lub ochładzaj cały kadr błyskawicznie.",
+      "Dokładnie koryguj zielone i magentowe zafarby.",
+      "Szybko ustawiaj barwę, nasycenie i luminancję.",
+      "Stosuj gotowe proporcje kadru pod publikację.",
+      "Wyprostuj przekrzywiony horyzont jednym gestem.",
+      "Koryguj zniekształcenia i artefakty obiektywu.",
+      "Subtelną winietą prowadź uwagę na temat.",
+      "Redukuj szum z zachowaniem ważnej faktury.",
+      "Wyostrzaj detale bez agresywnych obwódek.",
+      "Usuwaj drobne skazy i zabrudzenia matrycy.",
+      "Porządkuj eksport dzięki spójnym nazwom plików.",
+      "Łącz korekty w gotowe, warstwowe presety.",
+      "Porównuj efekt obok siebie podczas iteracji.",
+      "Dodaj wiele eksportów i pozwól im się wykonać.",
+      "Generuj lekkie pliki do sieci i social mediów.",
+      "Eksportuj wersje do druku z poprawnym rozmiarem.",
+      "Utrzymuj spójne metadane w całych paczkach.",
+      "Przyspieszaj powtarzalną pracę skrótami klawiszowymi."
+    ]
+  },
+  "download": {
+    "title": "Pobierz",
+    "subtitle": "Wybierz platformę i zainstaluj w kilka minut.",
+    "linux": {
+      "label": "Linux",
+      "packages": [
+        ".AppImage",
+        ".deb",
+        "snap",
+        "flatpak"
+      ]
+    },
+    "windows": {
+      "label": "Windows",
+      "packages": [
+        ".exe"
+      ]
+    },
+    "macos": {
+      "label": "macOS",
+      "packages": [
+        ".dmg"
+      ]
+    },
+    "note": "Warto dodać: karty szybkiego startu ze skrótami i przykładowymi workflow."
+  },
+  "extra": {
+    "title": "Dlaczego to podejście działa",
+    "items": [
+      "W większości amatorskich i freelancerskich workflow powtarza się te same 10-20 korekt.",
+      "Mniej paneli to większy flow i mniej zmęczenia decyzjami.",
+      "Open source oznacza przenośny workflow i rozwój przez społeczność."
+    ]
+  },
+  "images": {
+    "featuresAlt": "Podgląd panelu korekt",
+    "downloadAlt": "Podgląd opcji pobierania"
+  },
+  "footer": {
+    "copyright": "projekt fotonoza - darmowy i open source"
+  }
+}

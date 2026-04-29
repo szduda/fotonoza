@@ -1,0 +1,58 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: "en" | "pl";
+  path: string;
+}
+
+const { title, description, lang, path } = Astro.props;
+const baseUrl = "https://fotonoza.vercel.app";
+const canonical = new URL(path, baseUrl).toString();
+const ogImage = new URL("/images/og-fotonoza.jpg", baseUrl).toString();
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="author" content="fotonoza open source community" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={`${baseUrl}/`} />
+    <link rel="alternate" hreflang="pl" href={`${baseUrl}/pl/`} />
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="fotonoza" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="fotonoza - minimal photo editor landing page" />
+    <meta property="og:locale" content={lang === "pl" ? "pl_PL" : "en_US"} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:site" content="@fotonoza" />
+
+    <meta name="application-name" content="fotonoza" />
+    <meta name="apple-mobile-web-app-title" content="fotonoza" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

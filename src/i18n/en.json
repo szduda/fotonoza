@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "title": "fotonoza - minimal photo editor",
+    "description": "Free and open source photo editor for engaged amateurs and freelancers who want to edit faster with only essential tools."
+  },
+  "nav": {
+    "features": "Some Features",
+    "allFeatures": "All Features",
+    "download": "Download"
+  },
+  "hero": {
+    "headline": "Edit photos at the speed of your ideas.",
+    "tagline": "fotonoza helps you batch through hundreds or thousands of monthly photos with only the tools you actually use.",
+    "cta": "Jump to download",
+    "imageAlt": "Photo editor hero preview"
+  },
+  "someFeatures": {
+    "title": "Some Features",
+    "subtitle": "Built for fast sessions, not feature hunting.",
+    "items": [
+      "Fast exposure, contrast, and white balance controls.",
+      "Simple crop, rotate, and straighten workflow.",
+      "Local-first editing with no lock-in.",
+      "Presets that stay easy to understand.",
+      "Batch export in one clean panel.",
+      "Keyboard-first controls for repetitive edits."
+    ]
+  },
+  "allFeatures": {
+    "title": "All Features",
+    "subtitle": "A compact toolbox with 25 essentials.",
+    "items": [
+      "RAW preview",
+      "Exposure slider",
+      "Contrast tuning",
+      "White balance",
+      "Highlights recovery",
+      "Shadows lift",
+      "Tone curve",
+      "Color temperature",
+      "Tint balance",
+      "HSL basics",
+      "Crop presets",
+      "Straighten horizon",
+      "Lens correction",
+      "Vignette control",
+      "Noise reduction",
+      "Sharpen detail",
+      "Spot cleanup",
+      "Batch rename",
+      "Preset stacks",
+      "Side by side compare",
+      "Export queue",
+      "Web export",
+      "Print export",
+      "Metadata sync",
+      "Keyboard workflow"
+    ],
+    "descriptions": [
+      "Quickly inspect source detail before any edits.",
+      "Dial brightness in seconds with clean control.",
+      "Boost separation for crisp and balanced scenes.",
+      "Neutralize color casts with one precise move.",
+      "Recover bright skies and reflective highlights.",
+      "Lift dark areas while keeping natural depth.",
+      "Shape contrast precisely across tonal zones.",
+      "Warm up or cool down your whole image.",
+      "Fine-tune green and magenta cast correction.",
+      "Adjust hue, saturation, and luminance quickly.",
+      "Apply common crop ratios for every platform.",
+      "Fix tilted horizons in one fast gesture.",
+      "Correct optical distortion and edge artifacts.",
+      "Guide attention with subtle corner darkening.",
+      "Clean grain while preserving important texture.",
+      "Add clarity without creating harsh halos.",
+      "Remove tiny distractions and sensor dust spots.",
+      "Keep exports tidy with consistent file names.",
+      "Combine edits into reusable stackable presets.",
+      "Compare before and after while you iterate.",
+      "Queue many exports and let them finish.",
+      "Generate optimized files for social and web.",
+      "Export print-ready versions with correct sizing.",
+      "Keep metadata aligned across edited batches.",
+      "Use shortcuts to accelerate repetitive workflows."
+    ]
+  },
+  "download": {
+    "title": "Download",
+    "subtitle": "Choose your platform. Install in minutes.",
+    "linux": {
+      "label": "Linux",
+      "packages": [
+        ".AppImage",
+        ".deb",
+        "snap",
+        "flatpak"
+      ]
+    },
+    "windows": {
+      "label": "Windows",
+      "packages": [
+        ".exe"
+      ]
+    },
+    "macos": {
+      "label": "macOS",
+      "packages": [
+        ".dmg"
+      ]
+    },
+    "note": "Extra worth having: quick start cards with keyboard shortcuts and sample workflows."
+  },
+  "extra": {
+    "title": "Why this focus works",
+    "items": [
+      "Most hobby and freelance workflows repeat the same 10-20 edits.",
+      "Removing non-essential panels keeps you in flow and cuts decision fatigue.",
+      "Open source means your workflow is portable and community-driven."
+    ]
+  },
+  "images": {
+    "featuresAlt": "Editing controls preview",
+    "downloadAlt": "Download options preview"
+  },
+  "footer": {
+    "copyright": "fotonoza project - free and open source"
+  }
+}

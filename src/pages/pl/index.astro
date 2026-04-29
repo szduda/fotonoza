@@ -1,0 +1,11 @@
+---
+import LandingPage from "@/components/LandingPage.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getMessages } from "@/lib/i18n";
+
+const t = getMessages("pl");
+---
+
+<BaseLayout lang="pl" path="/pl/" title={t.meta.title} description={t.meta.description}>
+  <LandingPage lang="pl" t={t} switchHref="/" switchLabel="🇬🇧 EN" />
+</BaseLayout>
