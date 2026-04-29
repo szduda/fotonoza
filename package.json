@@ -12,10 +12,10 @@
     "vercel-build": "npm run build"
   },
   "dependencies": {
-    "astro": "^6.1.10"
+    "astro": "^6.1.2"
   },
   "devDependencies": {
-    "@astrojs/vercel": "^8.0.4",
+    "@astrojs/vercel": "^10.0.4",
     "@tailwindcss/vite": "4.1.0",
     "tailwindcss": "^4.1.0",
     "typescript": "5.9.3"
