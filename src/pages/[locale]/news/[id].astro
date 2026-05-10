@@ -107,7 +107,7 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
       {
         post.data.image ? (
           <figure class="mt-10 overflow-hidden rounded-xl border border-zinc-800">
-            <img src={post.data.image} alt="" class="h-auto w-full object-cover" width={1280} height={720} />
+            <img src={post.data.image} alt="" class="h-auto max-h-[60dvh] w-full object-contain" width={1280} height={720} />
           </figure>
         ) : null
       }

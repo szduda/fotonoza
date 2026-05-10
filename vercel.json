@@ -3,6 +3,8 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "redirects": [
+    { "source": "/en/:path", "destination": "/en/:path/", "permanent": true },
+    { "source": "/pl/:path", "destination": "/pl/:path/", "permanent": true },
     { "source": "/progress", "destination": "/en/news/", "permanent": true },
     { "source": "/progress/:id/", "destination": "/en/news/:id/", "permanent": true }
   ]
