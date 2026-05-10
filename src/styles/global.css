@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  @apply bg-zinc-950 text-zinc-100 antialiased;
+  @apply bg-mist-900/60 text-mist-500 antialiased;
 }
 
 .container {

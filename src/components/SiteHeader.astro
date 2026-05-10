@@ -11,16 +11,29 @@ interface Props {
   t: Messages;
 }
 
-const { lang, homeHref, newsHref, switchHref, switchLabel, instantHomeAnchors = false, t } = Astro.props;
+const {
+  lang,
+  homeHref,
+  newsHref,
+  switchHref,
+  switchLabel,
+  instantHomeAnchors = false,
+  t,
+} = Astro.props;
 const homeAnchorBase = instantHomeAnchors ? `${homeHref}?jump=1` : homeHref;
+
+const linkStyle =
+  "font-medium transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-mist-950";
 ---
 
-<header class="sticky top-0 inset-x-0 z-50 border-b border-zinc-800/70 bg-zinc-950">
+<header
+  class="sticky top-0 inset-x-0 z-50 border-b border-mist-700/50 bg-mist-950/80 backdrop-blur"
+>
   <nav class="container flex h-16 items-center justify-between">
     <div class="flex items-center gap-8">
       <a
         href={`${homeHref}#top`}
-        class="flex items-center gap-2 text-lg font-semibold tracking-wide text-zinc-100 transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        class={`flex items-center gap-2 text-lg font-semibold tracking-wide text-mist-300 ${linkStyle}`}
       >
         <img
           src="/fotonoza-logo.svg"
@@ -32,31 +45,26 @@ const homeAnchorBase = instantHomeAnchors ? `${homeHref}?jump=1` : homeHref;
         />
         <span class="hidden sm:inline">fotonoza</span>
       </a>
-      <div class="flex items-center gap-5 text-sm text-zinc-300">
-        <a
-          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={`${homeAnchorBase}#features`}
-        >
+
+      <div class="flex items-center gap-5 text-sm text-mist-400">
+        <a class={linkStyle} href={`${homeAnchorBase}#features`}>
           {t.nav.features}
         </a>
-        <a
-          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={`${homeAnchorBase}#download`}
-        >
+
+        <a class={linkStyle} href={`${homeAnchorBase}#download`}>
           {t.nav.download}
         </a>
-        <a
-          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={newsHref}
-        >
+
+        <a class={linkStyle} href={newsHref}>
           {t.nav.news}
         </a>
       </div>
     </div>
+
     <a
       href={switchHref}
       hreflang={lang === "en" ? "pl" : "en"}
-      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-300 hover:bg-yellow-200/10 hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+      class={`rounded border border-mist-700 px-2 py-1 text-xs font-medium text-mist-400 hover:border-yellow-300/30 hover:bg-yellow-200/5 ${linkStyle}`}
     >
       {switchLabel}
     </a>

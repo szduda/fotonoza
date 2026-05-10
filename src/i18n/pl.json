@@ -24,6 +24,20 @@
     "authorAvatarAlt": "Ilustrowany awatar AIndrzeja — maskotka-autor AI przy tych wpisach.",
     "authorPlainTalk": "A po waszemu, to jestem zwykły model językowy składający te notatki z historii repozytorium, bo ziomek nie ma czasu na to. Jeśli moja żywiołowa rejajtoryka nie jest dla Ciebie, przepraszam za niedogodności."
   },
+  "notFoundPage": {
+    "metaTitle": "Czy strona jest tam, gdzie ją szukasz? — fotonoza",
+    "metaDescription": "Lekko filozoficzna strona 404 o szukaniu adresu, trafieniu w ścianę i o miejscu, gdzie czekają zdjęcia.",
+    "timeLabel": "404 Maja",
+    "title": "Jeśli strony nie ma — czy szukałeś adresu, czy uczucia, że wszystko już się zgadza?",
+    "subtitle": "Krótka notatka z pogranicza mapy i terenu.",
+    "body1": "Fotografowie uczą się tego wcześnie: kadr to nie świat, tylko decyzja, gdzie go uciąć. Nieistniejąca strona działa podobnie — klikasz z pewnością siebie, oczekujesz przyjazdu, a trafiasz na pustkę. To nie ocena Twojej inteligencji; to przypomnienie, że ścieżki to opowieści, które snujemy, dopóki serwer albo link nie poprawi scenariusza.",
+    "body2": "Może strona uciekła. Może wyszła po kawę. Może żyła jeden commit, jeden deploy, jedną dobrą minutę — i została już tylko szeptem w historii przeglądarki. W changelogu to „błąd”, w kadrze to „moment”: coś było, światło poszło dalej.",
+    "body3": "Jeśli szukałeś pewności, weź w zamian orientację: nadal masz obiektyw, drogę do domu i prawo zadać następne pytanie. W obróbce i w wędrówce postęp rzadko znaczy „nigdy się nie pomylić”. Znaczy raczej: szybko zauważyć, uśmiechnąć się mimo wszystko i zrobić kolejny, świadomy krok.",
+    "captionPhoto": "Pewność, ładnie oprawiona, i tak potrafi się spóźnić.",
+    "captionComic": "Czasem ścieżka kręci się w kółko, zanim dowcip dojrzeje — ze zdjęciem bywa tak samo.",
+    "imgAltPhoto": "Nocna ulica: fotograf z aparatem naprzeciw świecącej, pustej ramy obrazu.",
+    "imgAltComic": "Ilustracja: labirynt z taśm filmowych, pustych ram i latarni."
+  },
   "hero": {
     "headline": "Edytuj zdjęcia w tempie swoich pomysłów.",
     "tagline": "fotonoza pomaga szybko przerabiać setki lub tysiące zdjęć miesięcznie, używając tylko narzędzi, które naprawdę są potrzebne.",

@@ -40,31 +40,41 @@ const featureColorPool = [
   "bg-rose-600/80",
   "bg-rose-700/80",
   "bg-rose-500/70",
-  "bg-rose-700/70"
+  "bg-rose-700/70",
 ];
 
 const shuffledColorIndexes = [
-  12, 1, 23, 8, 16,
-  4, 19, 6, 21, 14,
-  9, 24, 11, 3, 18,
-  0, 17, 10, 22, 5,
-  15, 2, 13, 20, 7
+  12, 1, 23, 8, 16, 4, 19, 6, 21, 14, 9, 24, 11, 3, 18, 0, 17, 10, 22, 5, 15, 2,
+  13, 20, 7,
 ];
 ---
 
-<SiteHeader lang={lang} homeHref={homeHref} newsHref={newsHref} switchHref={switchHref} switchLabel={switchLabel} t={t} />
+<SiteHeader
+  lang={lang}
+  homeHref={homeHref}
+  newsHref={newsHref}
+  switchHref={switchHref}
+  switchLabel={switchLabel}
+  t={t}
+/>
 
 <main id="top">
-  <section class="container grid min-h-[90vh] items-center gap-8 py-20 md:grid-cols-2">
+  <section
+    class="container grid min-h-[90vh] items-center gap-8 py-20 md:grid-cols-2"
+  >
     <div>
-      <p class="mb-4 inline-flex rounded-full border border-zinc-700 px-3 py-1 text-xs uppercase tracking-wider text-zinc-300">
+      <p
+        class="mb-4 inline-flex rounded-full border border-mist-700 px-3 py-1 text-xs uppercase tracking-wider text-mist-300"
+      >
         Free. Open source. Grounded.
       </p>
-      <h1 class="text-4xl font-bold leading-tight sm:text-5xl">{t.hero.headline}</h1>
-      <p class="mt-5 max-w-xl text-lg text-zinc-300">{t.hero.tagline}</p>
+      <h1 class="text-4xl font-bold leading-tight sm:text-5xl">
+        {t.hero.headline}
+      </h1>
+      <p class="mt-5 max-w-xl text-lg text-mist-300">{t.hero.tagline}</p>
       <a
         href="#download"
-        class="mt-8 inline-flex rounded bg-yellow-300 px-5 py-3 text-lg font-semibold text-zinc-950 shadow shadow-yellow-300/25 transition hover:bg-yellow-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        class="mt-8 inline-flex rounded bg-yellow-300 px-5 py-3 text-lg font-semibold text-mist-900 shadow shadow-yellow-300/25 transition hover:bg-yellow-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-mist-950"
       >
         {t.hero.cta}
       </a>
@@ -77,13 +87,19 @@ const shuffledColorIndexes = [
     />
   </section>
 
-  <section id="features" class="border-y border-zinc-800 bg-zinc-900/40 py-20">
+  <section id="features" class="border-y border-mist-800 bg-mist-800/40 py-20">
     <div class="container grid gap-8 md:grid-cols-2">
       <div>
         <h2 class="text-3xl font-semibold">{t.someFeatures.title}</h2>
-        <p class="mt-3 text-zinc-300">{t.someFeatures.subtitle}</p>
-        <ul class="mt-6 grid gap-3 text-zinc-200">
-          {t.someFeatures.items.map((item) => <li class="rounded border border-zinc-800 p-3">{item}</li>)}
+        <p class="mt-3 text-mist-300">{t.someFeatures.subtitle}</p>
+        <ul class="mt-6 grid gap-3 text-mist-300">
+          {
+            t.someFeatures.items.map((item) => (
+              <li class="rounded border border-mist-800 font-medium p-3">
+                {item}
+              </li>
+            ))
+          }
         </ul>
       </div>
       <div class="space-y-6">
@@ -95,7 +111,7 @@ const shuffledColorIndexes = [
         />
         <div>
           <h3 class="text-xl font-semibold">{t.extra.title}</h3>
-          <ul class="mt-3 space-y-2 text-zinc-300">
+          <ul class="mt-3 space-y-2 text-mist-300">
             {t.extra.items.map((item) => <li>• {item}</li>)}
           </ul>
         </div>
@@ -105,17 +121,17 @@ const shuffledColorIndexes = [
 
   <section id="all-features" class="container py-20">
     <h2 class="text-3xl font-semibold">{t.allFeatures.title}</h2>
-    <p class="mt-3 text-zinc-300">{t.allFeatures.subtitle}</p>
+    <p class="mt-3 text-mist-300">{t.allFeatures.subtitle}</p>
     <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
       {
         t.allFeatures.items.map((feature, idx) => (
           <div
-            class={`group relative aspect-square overflow-hidden rounded p-3 shadow ${featureColorPool[shuffledColorIndexes[idx]]}`}
+            class={`group relative aspect-square overflow-hidden rounded p-2 shadow ${featureColorPool[shuffledColorIndexes[idx]]}`}
           >
-            <span class="absolute inset-0 flex items-center justify-center p-3 text-center text-base font-extrabold uppercase tracking-wide text-white transition-opacity duration-200 group-hover:opacity-0">
+            <span class="absolute inset-0 flex items-center justify-center p-2 text-center text-base font-extrabold uppercase tracking-tighter text-white transition-opacity duration-200 group-hover:opacity-0">
               {feature}
             </span>
-            <span class="absolute inset-0 flex items-center justify-center p-3 text-center text-xs font-medium text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <span class="absolute inset-0 flex items-center justify-center p-2 text-center text-xs font-medium text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
               {t.allFeatures.descriptions[idx]}
             </span>
           </div>
@@ -124,41 +140,53 @@ const shuffledColorIndexes = [
     </div>
   </section>
 
-  <section id="download" class="border-t border-zinc-800 bg-zinc-900/40 py-20">
+  <section id="download" class="border-y border-mist-800 bg-mist-950/80 py-20">
     <div class="container">
       <h2 class="text-3xl font-semibold">{t.download.title}</h2>
-      <p class="mt-3 text-zinc-300">{t.download.subtitle}</p>
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <div class="rounded border border-zinc-800 p-5">
-          <h3 class="text-lg font-semibold">{t.download.linux.label}</h3>
+      <p class="mt-3 text-mist-400">{t.download.subtitle}</p>
+      <div class="mt-8 grid gap-4 md:grid-cols-3 text-mist-300/90">
+        <div class="rounded border border-mist-800 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">{t.download.linux.label}</h3>
           <div class="mt-4 grid grid-cols-2 gap-2">
             {
-              t.download.linux.packages.map((item) => <div class="rounded border border-zinc-700 p-3 text-center">{item}</div>)
-            }
-          </div>
-        </div>
-        <div class="rounded border border-zinc-800 p-5">
-          <h3 class="text-lg font-semibold">{t.download.windows.label}</h3>
-          <div class="mt-4 grid gap-2">
-            {
-              t.download.windows.packages.map((item) => (
-                <div class="rounded border border-zinc-700 p-3 text-center">{item}</div>
+              t.download.linux.packages.map((item) => (
+                <div class="rounded border border-mist-700 p-3 text-center font-medium">
+                  {item}
+                </div>
               ))
             }
           </div>
         </div>
-        <div class="rounded border border-zinc-800 p-5">
-          <h3 class="text-lg font-semibold">{t.download.macos.label}</h3>
+        <div class="rounded border border-mist-800 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">{t.download.windows.label}</h3>
           <div class="mt-4 grid gap-2">
-            {t.download.macos.packages.map((item) => <div class="rounded border border-zinc-700 p-3 text-center">{item}</div>)}
+            {
+              t.download.windows.packages.map((item) => (
+                <div class="rounded border border-mist-700 p-3 text-center font-medium">
+                  {item}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <div class="rounded border border-mist-800 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">{t.download.macos.label}</h3>
+          <div class="mt-4 grid gap-2">
+            {
+              t.download.macos.packages.map((item) => (
+                <div class="rounded border border-mist-700 p-3 text-center font-medium">
+                  {item}
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>
-      <p class="mt-6 text-sm text-zinc-400">{t.download.note}</p>
+      <p class="mt-6 text-sm text-mist-400">{t.download.note}</p>
     </div>
   </section>
 </main>
 
-<footer class="container border-t border-zinc-800 py-8 text-sm text-zinc-400">
+<footer class="container py-8 text-sm font-medium text-mist-500/90">
   <p>{t.footer.copyright}</p>
 </footer>

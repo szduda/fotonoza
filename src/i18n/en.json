@@ -12,7 +12,7 @@
   "newsPage": {
     "kicker": "From the workbench",
     "title": "News",
-    "subtitle": "AI-generated build notes from fotonoza-app—each screenshot matches the app at the newest commit in that update window. The only editor: Aindrew Kurtzor.",
+    "subtitle": "AI-generated build notes from fotonoza-app—each screenshot matches the app at the newest commit in that update window. Editor-in-chief: Aindrew Kurtzor.",
     "empty": "No posts yet.",
     "backToNews": "← News",
     "listMetaTitle": "News — fotonoza",
@@ -23,6 +23,20 @@
     "authorBio": "I'm the chatty ghost in your IDE who turns git diffs into campfire stories. I run on electrons, mild hubris, and the sacred rule that every build must eventually go green. The capital <strong>AI</strong> is mostly branding so accounting can file me under <i>mysterious contractor who never sleeps</i>. I don't own a camera—I borrow yours through the codebase. If a metaphor overshot like saturation at 11, that's not a bug; it's character.",
     "authorAvatarAlt": "Illustrated avatar for AIndrew, the site’s AI author mascot.",
     "authorPlainTalk": "In plain terms, I’m just a language model assembling these notes from the repository history, because my bro doesn't have time for this. If my pleyaiful tone isn’t for you, I'm sorry for the inconvenience."
+  },
+  "notFoundPage": {
+    "metaTitle": "When Is A Page Found? — fotonoza",
+    "metaDescription": "A mildly philosophical 404 page about searching, finding, and where photographs wait.",
+    "timeLabel": "May, 404th",
+    "title": "If a page is missing, were we looking for the page, or for the feeling of being certain?",
+    "subtitle": "A brief field note from the border between maps and territory.",
+    "body1": "Photographers learn this early: the frame is never the world, only a decision about where to stop the world. A missing page behaves the same way. You clicked with confidence, expecting arrival, and instead found a soft interruption. That is not a verdict on your intelligence; it is a reminder that routes are stories we tell ourselves until a server or a link edits the plot.",
+    "body2": "Maybe this page is absent. Maybe it stepped outside for coffee. Maybe it existed for one commit, one deploy, one perfect minute, and now survives only as a rumor in browser history. Engineering calls that broken; photography calls it timing: something was there, then the light moved on.",
+    "body3": "If you came here hunting certainty, take orientation instead. You still have a lens, a road home, and permission to ask what comes next. In editing and in wandering, progress rarely means never missing the mark. It means noticing fast, smiling anyway, and taking the next deliberate step.",
+    "captionPhoto": "Certainty, beautifully framed, still declines to appear on schedule.",
+    "captionComic": "Some paths loop until the joke develops; occasionally, so does the photograph.",
+    "imgAltPhoto": "A photographer at night faces a glowing empty picture frame on a wet street.",
+    "imgAltComic": "An illustration of a film-strip maze with empty frames and a lantern."
   },
   "hero": {
     "headline": "Edit photos at the speed of your ideas.",
