@@ -18,7 +18,7 @@ const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
     <div class="flex items-center gap-8">
       <a
         href={`${homeHref}#top`}
-        class="flex items-center gap-2 text-lg font-semibold tracking-wide text-zinc-100 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        class="flex items-center gap-2 text-lg font-semibold tracking-wide text-zinc-100 transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
       >
         <img
           src="/fotonoza-logo.svg"
@@ -32,25 +32,25 @@ const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
       </a>
       <div class="flex items-center gap-5 text-sm text-zinc-300">
         <a
-          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           href={`${homeHref}#features`}
         >
           {t.nav.features}
         </a>
         <a
-          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           href={`${homeHref}#all-features`}
         >
           {t.nav.allFeatures}
         </a>
         <a
-          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           href={`${homeHref}#download`}
         >
           {t.nav.download}
         </a>
         <a
-          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           href={newsHref}
         >
           {t.nav.news}
@@ -60,7 +60,7 @@ const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
     <a
       href={switchHref}
       hreflang={lang === "en" ? "pl" : "en"}
-      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-300 hover:bg-yellow-300/10 hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
     >
       {switchLabel}
     </a>

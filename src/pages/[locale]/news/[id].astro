@@ -72,14 +72,14 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
       <p class="text-sm text-zinc-500">
         <a
           href={newsIndexPath(lang)}
-          class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="text-zinc-400 transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           {t.newsPage.backToNews}
         </a>
         <span class="mx-2 text-zinc-600">·</span>
         <a
           href={homePath(lang)}
-          class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          class="text-zinc-400 transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           fotonoza
         </a>
@@ -90,7 +90,7 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
               <a
                 href={newsArticlePath(other, storySlug)}
                 hreflang={other}
-                class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+                class="text-zinc-400 transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
               >
                 {lang === "en" ? "Polski" : "English"}
               </a>
@@ -112,7 +112,7 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
       }
     </header>
     <div
-      class="mx-auto mt-12 max-w-3xl space-y-4 leading-relaxed text-zinc-300 [&_a]:text-yellow-500 [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-yellow-400 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-zinc-900 [&_code]:px-1 [&_code]:text-zinc-200 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-white [&_li]:my-1 [&_ul]:list-disc [&_ul]:pl-6"
+      class="mx-auto mt-12 max-w-3xl space-y-4 leading-relaxed text-zinc-300 [&_a]:text-yellow-300 [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-yellow-300 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-zinc-900 [&_code]:px-1 [&_code]:text-zinc-200 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-white [&_li]:my-1 [&_ul]:list-disc [&_ul]:pl-6"
     >
       <Content />
     </div>
