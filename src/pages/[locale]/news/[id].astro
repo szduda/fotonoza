@@ -65,6 +65,7 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
     newsHref={newsHref}
     switchHref={switchLocalePath(Astro.url.pathname, other)}
     switchLabel={lang === "en" ? "🇵🇱 PL" : "🇬🇧 EN"}
+    instantHomeAnchors={true}
     t={t}
   />
   <article class="container py-16">

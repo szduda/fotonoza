@@ -7,13 +7,15 @@ interface Props {
   newsHref: string;
   switchHref: string;
   switchLabel: string;
+  instantHomeAnchors?: boolean;
   t: Messages;
 }
 
-const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
+const { lang, homeHref, newsHref, switchHref, switchLabel, instantHomeAnchors = false, t } = Astro.props;
+const homeAnchorBase = instantHomeAnchors ? `${homeHref}?jump=1` : homeHref;
 ---
 
-<header class="sticky top-0 z-50 border-b border-zinc-800/70 bg-zinc-950/90 backdrop-blur">
+<header class="sticky top-0 inset-x-0 z-50 border-b border-zinc-800/70 bg-zinc-950">
   <nav class="container flex h-16 items-center justify-between">
     <div class="flex items-center gap-8">
       <a
@@ -28,24 +30,18 @@ const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
           class="h-8 w-8 shrink-0"
           decoding="async"
         />
-        fotonoza
+        <span class="hidden sm:inline">fotonoza</span>
       </a>
       <div class="flex items-center gap-5 text-sm text-zinc-300">
         <a
           class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={`${homeHref}#features`}
+          href={`${homeAnchorBase}#features`}
         >
           {t.nav.features}
         </a>
         <a
           class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={`${homeHref}#all-features`}
-        >
-          {t.nav.allFeatures}
-        </a>
-        <a
-          class="transition-colors hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          href={`${homeHref}#download`}
+          href={`${homeAnchorBase}#download`}
         >
           {t.nav.download}
         </a>
@@ -60,7 +56,7 @@ const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
     <a
       href={switchHref}
       hreflang={lang === "en" ? "pl" : "en"}
-      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-300 hover:bg-yellow-300/10 hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-300 hover:bg-yellow-200/10 hover:text-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
     >
       {switchLabel}
     </a>

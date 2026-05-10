@@ -53,6 +53,23 @@ const ogImage = new URL("/images/og-fotonoza.jpg", baseUrl).toString();
     <meta name="apple-mobile-web-app-title" content="fotonoza" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script is:inline>
+      (() => {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("jump") !== "1") return;
+        document.documentElement.style.scrollBehavior = "auto";
+        window.addEventListener(
+          "load",
+          () => {
+            document.documentElement.style.scrollBehavior = "";
+            url.searchParams.delete("jump");
+            const next = `${url.pathname}${url.search}${url.hash}`;
+            window.history.replaceState({}, "", next);
+          },
+          { once: true }
+        );
+      })();
+    </script>
   </head>
   <body>
     <slot />

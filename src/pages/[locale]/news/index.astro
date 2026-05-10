@@ -47,6 +47,7 @@ const path = newsIndexPath(lang);
     newsHref={newsHref}
     switchHref={switchLocalePath(Astro.url.pathname, other)}
     switchLabel={lang === "en" ? "🇵🇱 PL" : "🇬🇧 EN"}
+    instantHomeAnchors={true}
     t={t}
   />
   <main class="container py-16">
