@@ -6,7 +6,18 @@
   "nav": {
     "features": "Some Features",
     "allFeatures": "All Features",
-    "download": "Download"
+    "download": "Download",
+    "news": "News"
+  },
+  "newsPage": {
+    "kicker": "From the workbench",
+    "title": "News",
+    "subtitle": "Build notes from fotonoza-app—each screenshot matches the app at the newest commit in that update window.",
+    "empty": "No posts yet.",
+    "backToNews": "← News",
+    "listMetaTitle": "News — fotonoza",
+    "listMetaDescription": "Updates and dev notes for the fotonoza photo editor.",
+    "postTitleSuffix": "— fotonoza"
   },
   "hero": {
     "headline": "Edit photos at the speed of your ideas.",

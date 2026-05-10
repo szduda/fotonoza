@@ -1,0 +1,139 @@
+#!/usr/bin/env node
+import "dotenv/config";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { parseYyMmDdHhMmUtc } from "./lib/parseYyMmDdHhMm.mjs";
+import { getFotonozaRoot, resolveAppRoot } from "./lib/paths.mjs";
+import { runProgressPipeline } from "./lib/runProgressPipeline.mjs";
+
+const execFileAsync = promisify(execFile);
+
+function printUsage() {
+  console.error(`Usage: npm run backfill -- <yyMMddHHmm> <yyMMddHHmm> [options]
+
+  Inclusive UTC window on **author date** in fotonoza-app. Produces exactly one
+  progress post (markdown + PNG) under this repo.
+
+Options:
+  --app-root <path>   Override FOTONOZA_APP_ROOT
+  --commit            Create branch progress/backfill-… and git add (fotonoza repo)
+  --push              Push branch (implies --commit)
+  --no-pr             With --push, skip gh pr create
+
+Environment:
+  CURSOR_API_KEY      Required
+  FOTONOZA_APP_ROOT   Optional path to fotonoza-app
+  FOTONOZA_PREVIEW_URL  Default http://127.0.0.1:4173
+`);
+}
+
+function argvFlags(argv) {
+  const out = { commit: false, push: false, noPr: false, appRoot: undefined };
+  const rest = [];
+  for (let i = 2; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--commit") out.commit = true;
+    else if (a === "--push") {
+      out.push = true;
+      out.commit = true;
+    } else if (a === "--no-pr") out.noPr = true;
+    else if (a === "--app-root") {
+      out.appRoot = argv[++i];
+      if (!out.appRoot) throw new Error("--app-root needs a value");
+    } else if (a.startsWith("-")) {
+      throw new Error(`Unknown flag: ${a}`);
+    } else rest.push(a);
+  }
+  return { ...out, positional: rest };
+}
+
+async function maybeGitCommitPushPr({ fotonozaRoot, slug, flags }) {
+  if (!flags.commit) return;
+  const branch = `progress/backfill-${slug}`;
+  console.log(`[git] branch ${branch}`);
+  await execFileAsync("git", ["-C", fotonozaRoot, "checkout", "-B", branch]);
+  await execFileAsync("git", ["-C", fotonozaRoot, "add", "src/content/progress", "public/progress"]);
+  try {
+    await execFileAsync("git", ["-C", fotonozaRoot, "diff", "--cached", "--quiet"]);
+    console.log("[git] nothing to commit (already committed?)");
+    return;
+  } catch (e) {
+    const code = typeof e === "object" && e && "code" in e ? e.code : undefined;
+    if (code !== 1) throw e;
+  }
+  await execFileAsync("git", ["-C", fotonozaRoot, "commit", "-m", `progress: backfill ${slug}`]);
+  if (!flags.push) {
+    console.log("[git] committed on", branch, "(omit --push to stop here)");
+    return;
+  }
+  await execFileAsync("git", ["-C", fotonozaRoot, "push", "-u", "origin", branch]);
+  if (flags.noPr) return;
+  try {
+    const { stdout } = await execFileAsync(
+      "gh",
+      [
+        "pr",
+        "create",
+        "--head",
+        branch,
+        "--title",
+        `Progress: ${slug}`,
+        "--body",
+        `Automated backfill post \`${slug}\`.`
+      ],
+      { cwd: fotonozaRoot }
+    );
+    console.log(stdout.trim());
+  } catch (e) {
+    console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", e.message);
+  }
+}
+
+async function main() {
+  const flags = argvFlags(process.argv);
+  const [a, b] = flags.positional;
+  if (!a || !b) {
+    printUsage();
+    process.exit(64);
+  }
+
+  const apiKey = process.env.CURSOR_API_KEY;
+  if (!apiKey) {
+    console.error("Missing CURSOR_API_KEY (set in environment or .env)");
+    process.exit(1);
+  }
+
+  const startUtc = parseYyMmDdHhMmUtc(a);
+  const endUtc = parseYyMmDdHhMmUtc(b);
+  if (startUtc.getTime() > endUtc.getTime()) {
+    console.error("Start instant must be <= end instant (UTC).");
+    process.exit(64);
+  }
+
+  const fotonozaRoot = getFotonozaRoot();
+  const appRoot = resolveAppRoot(flags.appRoot);
+
+  try {
+    const { slug } = await runProgressPipeline({
+      apiKey,
+      fotonozaRoot,
+      appRoot,
+      rangeStartToken: a,
+      rangeEndToken: b,
+      startUtc,
+      endUtc
+    });
+    console.log(`[backfill] wrote ${slug}`);
+    await maybeGitCommitPushPr({ fotonozaRoot, slug, flags });
+    process.exit(0);
+  } catch (e) {
+    if (e && typeof e === "object" && "code" in e && e.code === "NO_COMMITS") {
+      console.error(e.message);
+      process.exit(2);
+    }
+    console.error(e);
+    process.exit(1);
+  }
+}
+
+main();

@@ -9,10 +9,14 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "backfill": "node scripts/backfill.mjs"
   },
   "dependencies": {
-    "astro": "^6.1.2"
+    "@cursor/sdk": "^1.0.12",
+    "playwright": "^1.59.1",
+    "astro": "^6.1.2",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@astrojs/vercel": "^10.0.4",

@@ -6,7 +6,18 @@
   "nav": {
     "features": "Wybrane funkcje",
     "allFeatures": "Wszystkie funkcje",
-    "download": "Pobierz"
+    "download": "Pobierz",
+    "news": "Aktualności"
+  },
+  "newsPage": {
+    "kicker": "Z warsztatu",
+    "title": "Aktualności",
+    "subtitle": "Notatki z budowy fotonoza-app—zrzut ekranu pokazuje aplikację w stanie z najnowszego commita w danym oknie czasu.",
+    "empty": "Na razie brak wpisów.",
+    "backToNews": "← Aktualności",
+    "listMetaTitle": "Aktualności — fotonoza",
+    "listMetaDescription": "Nowości i notatki z rozwoju edytora zdjęć fotonoza.",
+    "postTitleSuffix": "— fotonoza"
   },
   "hero": {
     "headline": "Edytuj zdjęcia w tempie swoich pomysłów.",

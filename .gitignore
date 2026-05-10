@@ -3,3 +3,6 @@ dist
 .astro
 .vercel
 *.log
+.env
+.env.*
+!.env.example

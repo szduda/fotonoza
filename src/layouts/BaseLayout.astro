@@ -6,9 +6,11 @@ interface Props {
   description: string;
   lang: "en" | "pl";
   path: string;
+  /** Same page in the other locale (path only, e.g. `/en/news/foo/`) */
+  alternatePaths: { en: string; pl: string };
 }
 
-const { title, description, lang, path } = Astro.props;
+const { title, description, lang, path, alternatePaths } = Astro.props;
 const baseUrl = "https://fotonoza.vercel.app";
 const canonical = new URL(path, baseUrl).toString();
 const ogImage = new URL("/images/og-fotonoza.jpg", baseUrl).toString();
@@ -28,9 +30,9 @@ const ogImage = new URL("/images/og-fotonoza.jpg", baseUrl).toString();
     <meta name="theme-color" content="#09090b" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="en" href={`${baseUrl}/`} />
-    <link rel="alternate" hreflang="pl" href={`${baseUrl}/pl/`} />
-    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/`} />
+    <link rel="alternate" hreflang="en" href={new URL(alternatePaths.en, baseUrl).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(alternatePaths.pl, baseUrl).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(alternatePaths.en, baseUrl).href} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="fotonoza" />

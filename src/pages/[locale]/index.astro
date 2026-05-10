@@ -1,0 +1,36 @@
+---
+import LandingPage from "@/components/LandingPage.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getMessages, type Lang } from "@/lib/i18n";
+import { homePath, isSupportedLocale, newsIndexPath, otherLocale } from "@/lib/locale";
+
+export function getStaticPaths() {
+  return [{ params: { locale: "en" } }, { params: { locale: "pl" } }];
+}
+
+const raw = Astro.params.locale;
+if (!isSupportedLocale(raw)) {
+  return Astro.redirect("/en/");
+}
+
+const lang: Lang = raw;
+const t = getMessages(lang);
+const other = otherLocale(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  path={homePath(lang)}
+  title={t.meta.title}
+  description={t.meta.description}
+  alternatePaths={{ en: homePath("en"), pl: homePath("pl") }}
+>
+  <LandingPage
+    lang={lang}
+    t={t}
+    homeHref={homePath(lang)}
+    newsHref={newsIndexPath(lang)}
+    switchHref={homePath(other)}
+    switchLabel={lang === "en" ? "🇵🇱 PL" : "🇬🇧 EN"}
+  />
+</BaseLayout>

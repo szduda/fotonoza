@@ -3,12 +3,16 @@ import type { Lang, Messages } from "@/lib/i18n";
 
 interface Props {
   lang: Lang;
+  /** e.g. `/en/` */
+  homeHref: string;
+  /** e.g. `/en/news/` */
+  newsHref: string;
   switchHref: string;
   switchLabel: string;
   t: Messages;
 }
 
-const { lang, switchHref, switchLabel, t } = Astro.props;
+const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
 
 const featureColorPool = [
   "bg-fuchsia-500/80",
@@ -50,11 +54,12 @@ const shuffledColorIndexes = [
 <header class="sticky top-0 z-50 border-b border-zinc-800/70 bg-zinc-950/90 backdrop-blur">
   <nav class="container flex h-16 items-center justify-between">
     <div class="flex items-center gap-8">
-      <a href="#top" class="text-lg font-semibold tracking-wide text-zinc-100">fotonoza</a>
+      <a href={`${homeHref}#top`} class="text-lg font-semibold tracking-wide text-zinc-100">fotonoza</a>
       <div class="flex items-center gap-5 text-sm text-zinc-300">
-      <a class="hover:text-white" href="#features">{t.nav.features}</a>
-      <a class="hover:text-white" href="#all-features">{t.nav.allFeatures}</a>
-      <a class="hover:text-white" href="#download">{t.nav.download}</a>
+        <a class="hover:text-white" href="#features">{t.nav.features}</a>
+        <a class="hover:text-white" href="#all-features">{t.nav.allFeatures}</a>
+        <a class="hover:text-white" href="#download">{t.nav.download}</a>
+        <a class="hover:text-white" href={newsHref}>{t.nav.news}</a>
       </div>
     </div>
     <a
