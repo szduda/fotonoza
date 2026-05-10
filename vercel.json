@@ -4,7 +4,6 @@
   "outputDirectory": "dist",
   "redirects": [
     { "source": "/progress", "destination": "/en/news/", "permanent": true },
-    { "source": "/progress/:id", "destination": "/en/news/:id/", "permanent": true },
     { "source": "/progress/:id/", "destination": "/en/news/:id/", "permanent": true }
   ]
 }
