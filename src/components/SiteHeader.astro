@@ -1,0 +1,68 @@
+---
+import type { Lang, Messages } from "@/lib/i18n";
+
+interface Props {
+  lang: Lang;
+  homeHref: string;
+  newsHref: string;
+  switchHref: string;
+  switchLabel: string;
+  t: Messages;
+}
+
+const { lang, homeHref, newsHref, switchHref, switchLabel, t } = Astro.props;
+---
+
+<header class="sticky top-0 z-50 border-b border-zinc-800/70 bg-zinc-950/90 backdrop-blur">
+  <nav class="container flex h-16 items-center justify-between">
+    <div class="flex items-center gap-8">
+      <a
+        href={`${homeHref}#top`}
+        class="flex items-center gap-2 text-lg font-semibold tracking-wide text-zinc-100 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+      >
+        <img
+          src="/fotonoza-logo.svg"
+          alt=""
+          width={32}
+          height={32}
+          class="h-8 w-8 shrink-0"
+          decoding="async"
+        />
+        fotonoza
+      </a>
+      <div class="flex items-center gap-5 text-sm text-zinc-300">
+        <a
+          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          href={`${homeHref}#features`}
+        >
+          {t.nav.features}
+        </a>
+        <a
+          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          href={`${homeHref}#all-features`}
+        >
+          {t.nav.allFeatures}
+        </a>
+        <a
+          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          href={`${homeHref}#download`}
+        >
+          {t.nav.download}
+        </a>
+        <a
+          class="transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          href={newsHref}
+        >
+          {t.nav.news}
+        </a>
+      </div>
+    </div>
+    <a
+      href={switchHref}
+      hreflang={lang === "en" ? "pl" : "en"}
+      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 transition-colors hover:border-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+    >
+      {switchLabel}
+    </a>
+  </nav>
+</header>

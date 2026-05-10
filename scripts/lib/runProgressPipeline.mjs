@@ -15,6 +15,52 @@ import { writeProgressArtifacts } from "./writeProgressDoc.mjs";
 
 const execFileAsync = promisify(execFile);
 
+/** @param {unknown} e */
+function formatExecError(e) {
+  if (e && typeof e === "object") {
+    const err = /** @type {{ stderr?: unknown; stdout?: unknown; message?: string }} */ (e);
+    const s = [err.stderr, err.stdout].filter(Boolean).join("\n").trim();
+    if (s) return s.slice(-8000);
+    if (err.message) return err.message;
+  }
+  return e instanceof Error ? e.message : String(e);
+}
+
+/**
+ * Prefer `npm run build` (tsc + vite). Historic commits may fail tsc (unused locals,
+ * strict errors); then retry with `vite build` only so preview + screenshots still work.
+ * @param {{ appRoot: string; env: NodeJS.ProcessEnv }} p
+ */
+async function buildAppBundleForPreview(p) {
+  const execOpts = { cwd: p.appRoot, env: p.env, maxBuffer: 50 * 1024 * 1024 };
+  if (p.env.FOTONOZA_APP_VITE_BUILD_ONLY === "1") {
+    console.log("[pipeline] FOTONOZA_APP_VITE_BUILD_ONLY=1 — running `npx vite build` only");
+    await execFileAsync("npx", ["vite", "build"], execOpts);
+    console.log("[pipeline] fotonoza-app build: ok (vite only — forced)");
+    return;
+  }
+  try {
+    await execFileAsync("npm", ["run", "build"], execOpts);
+    console.log("[pipeline] fotonoza-app build: ok (npm run build — tsc + vite)");
+    return;
+  } catch (firstErr) {
+    const firstMsg = formatExecError(firstErr);
+    console.warn(
+      "[pipeline] npm run build failed (often strict TS on old commits). Retrying with `npx vite build` (skips tsc)…"
+    );
+    if (firstMsg) console.warn(firstMsg.slice(-4000));
+    try {
+      await execFileAsync("npx", ["vite", "build"], execOpts);
+      console.log("[pipeline] fotonoza-app build: ok (vite only — no tsc)");
+    } catch (secondErr) {
+      const secondMsg = formatExecError(secondErr);
+      throw new Error(
+        `fotonoza-app build failed after full build and vite-only retry.\n\n--- npm run build ---\n${firstMsg}\n\n--- npx vite build ---\n${secondMsg}`
+      );
+    }
+  }
+}
+
 /**
  * Range → markdown + PNG under fotonoza. Shared entry for backfill and (later) CI.
  *
@@ -82,12 +128,7 @@ export async function runProgressPipeline(opts) {
     targetSha: screenshotHeadSha,
     fn: async () => {
       console.log(`[pipeline] fotonoza-app @ ${screenshotHeadSha.slice(0, 7)} (detached) — build + screenshot`);
-      console.log("[pipeline] npm run build (fotonoza-app)…");
-      await execFileAsync("npm", ["run", "build"], {
-        cwd: opts.appRoot,
-        env: buildEnv,
-        maxBuffer: 50 * 1024 * 1024
-      });
+      await buildAppBundleForPreview({ appRoot: opts.appRoot, env: buildEnv });
       console.log("[pipeline] Playwright + vite preview…");
       await runScreenshotPlan({
         appRoot: opts.appRoot,

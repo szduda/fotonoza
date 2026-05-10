@@ -19,9 +19,9 @@ Each post is a **beat in that longer arc**: curiosity, frustration, small wins, 
 
 Tone: **warm, human, a little playful** — story first, then facts. Emotions are welcome (excited, skeptical, relieved, obsessed). Avoid corporate marketing speak and dry bullet dumps. You can be opinionated about tradeoffs.
 
-The entry will ship on the static Astro site **fotonoza** with a screenshot from \`vite preview\` of the app **frozen at commit ${shortSha}** — the **newest commit in this UTC window** — so describe the UI as it plausibly looks **at that moment** in the journey.
+The entry will ship on the static Astro site **fotonoza** with a screenshot from \`vite preview\` of the app **frozen at commit ${shortSha}** (newest commit in this batch). Describe the UI as it plausibly looks at that point in the story.
 
-## Git activity (fotonoza-app) in the requested UTC window
+## Git activity (fotonoza-app) for this batch
 
 ${p.gitPayload}
 
@@ -32,7 +32,7 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
 {
   "title": "short headline",
   "description": "one line for meta / listing",
-  "pubDate": "ISO-8601 UTC instant string",
+  "pubDate": "ISO-8601 UTC instant string (metadata only — the site shows one human-facing date above the title; readers never see this raw string in the article)",
   "body": "Markdown body only (no YAML frontmatter). Use ## headings sparingly; prefer flowing paragraphs with occasional emphasis.",
   "screenshotPlan": {
     "steps": [
@@ -60,7 +60,12 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
 - Tie this batch of commits to the **north star** above (simple surface, deep usefulness for advanced-amateurs).
 - **Voice**: fun, narrative, emotional — like a builder talking to friends, not a press release.
 - **Continuity**: nod to this being **episode N** of an ongoing story (one short phrase is enough: e.g. “another week on the slow road to…”).
-- Mention the UTC window once in prose: range tokens ${p.rangeStartToken} .. ${p.rangeEndToken} (yyMMddHHmm, UTC).
+
+### Dates (strict)
+
+- **Do not** put dates, times, or ranges in **title**, **description**, or **body** — no calendar phrases (“on May 10…”), no week labels tied to a clock, no **ISO-8601** strings, no **yyMMddHHmm** tokens, no “between timestamps … UTC”, no committer/author timestamps, and no “last Tuesday”-style anchors.
+- The page already shows a single publication line above the headline; **that** is the only date the reader needs. Your job is story and product, not a timeline recap.
+- The JSON \`pubDate\` field is still required (ISO string for the CMS) but must **not** be echoed or paraphrased inside title, description, or body.
 
 Do not include keys other than title, description, pubDate, body, screenshotPlan.`;
 }

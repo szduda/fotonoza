@@ -8,6 +8,7 @@ const progress = defineCollection({
     base: new URL("./content/progress/", import.meta.url)
   }),
   schema: z.object({
+    locale: z.enum(["en", "pl"]),
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),

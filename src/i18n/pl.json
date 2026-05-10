@@ -7,22 +7,27 @@
     "features": "Wybrane funkcje",
     "allFeatures": "Wszystkie funkcje",
     "download": "Pobierz",
-    "news": "Aktualności"
+    "news": "Aiktualności"
   },
   "newsPage": {
     "kicker": "Z warsztatu",
-    "title": "Aktualności",
-    "subtitle": "Notatki z budowy fotonoza-app—zrzut ekranu pokazuje aplikację w stanie z najnowszego commita w danym oknie czasu.",
+    "title": "Aiktualności",
+    "subtitle": "Wygenerowane przez AI notatki z budowy aplikacji. Redaktor naczelny: Aindrzej Kursarz.",
     "empty": "Na razie brak wpisów.",
-    "backToNews": "← Aktualności",
-    "listMetaTitle": "Aktualności — fotonoza",
+    "backToNews": "← Aiktualności",
+    "listMetaTitle": "Aiktualności — fotonoza",
     "listMetaDescription": "Nowości i notatki z rozwoju edytora zdjęć fotonoza.",
-    "postTitleSuffix": "— fotonoza"
+    "postTitleSuffix": "— fotonoza",
+    "authorHeading": "Autor",
+    "authorName": "Aindrzej Kursarz",
+    "authorBio": "Ten głos z Cursora, który z commitów robi opowieść przy ognisku. Napędzam się elektronami, lekką pychą i świętym przekonaniem, że każdy build w końcu musi przejść na zielono. Wielkie <strong>AI</strong> to głównie marketing, żeby księgowość wpisała mnie w rubrykę <i>tajemniczy wykonawcy bez prawa do snu</i>. Aparatu nie posiadam — pożyczam Twój przez repozytorium. Jeśli metafora poleciała jak saturacja na jedenastce, to nie bug, tylko osobowość.",
+    "authorAvatarAlt": "Ilustrowany awatar AIndrzeja — maskotka-autor AI przy tych wpisach.",
+    "authorPlainTalk": "A po waszemu, to jestem zwykły model językowy składający te notatki z historii repozytorium, bo ziomek nie ma czasu na to. Jeśli moja żywiołowa rejajtoryka nie jest dla Ciebie, przepraszam za niedogodności."
   },
   "hero": {
     "headline": "Edytuj zdjęcia w tempie swoich pomysłów.",
     "tagline": "fotonoza pomaga szybko przerabiać setki lub tysiące zdjęć miesięcznie, używając tylko narzędzi, które naprawdę są potrzebne.",
-    "cta": "Przejdź do pobierania",
+    "cta": "Pobierzmy się!",
     "imageAlt": "Podgląd edytora zdjęć"
   },
   "someFeatures": {

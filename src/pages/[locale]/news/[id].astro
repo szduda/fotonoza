@@ -1,19 +1,25 @@
 ---
+import SiteHeader from "@/components/SiteHeader.astro";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMessages } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
-import { homePath, isSupportedLocale, newsArticlePath, newsIndexPath, otherLocale } from "@/lib/locale";
+import {
+  homePath,
+  isSupportedLocale,
+  newsArticlePath,
+  newsIndexPath,
+  newsStorySlugFromEntryId,
+  otherLocale,
+  switchLocalePath
+} from "@/lib/locale";
 
 export async function getStaticPaths() {
   const posts = await getCollection("progress");
-  const locales: Lang[] = ["en", "pl"];
-  return locales.flatMap((locale) =>
-    posts.map((post) => ({
-      params: { locale, id: post.id },
-      props: { post }
-    }))
-  );
+  return posts.map((post) => ({
+    params: { locale: post.data.locale, id: newsStorySlugFromEntryId(post.id) },
+    props: { post }
+  }));
 }
 
 const raw = Astro.params.locale;
@@ -24,9 +30,22 @@ if (!isSupportedLocale(raw)) {
 const lang: Lang = raw;
 const { post } = Astro.props;
 
+if (post.data.locale !== lang) {
+  return Astro.redirect(newsIndexPath(lang));
+}
+
+const other = otherLocale(lang);
+const all = await getCollection("progress");
+const storySlug = newsStorySlugFromEntryId(post.id);
+const sibling = all.find(
+  (p) => newsStorySlugFromEntryId(p.id) === storySlug && p.data.locale === other
+);
+
 const t = getMessages(lang);
+const homeHref = homePath(lang);
+const newsHref = newsIndexPath(lang);
 const { Content } = await render(post);
-const path = newsArticlePath(lang, post.id);
+const path = newsArticlePath(lang, storySlug);
 const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
 ---
 
@@ -36,20 +55,48 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
   title={title}
   description={post.data.description}
   alternatePaths={{
-    en: newsArticlePath("en", post.id),
-    pl: newsArticlePath("pl", post.id)
+    en: newsArticlePath("en", storySlug),
+    pl: newsArticlePath("pl", storySlug)
   }}
 >
+  <SiteHeader
+    lang={lang}
+    homeHref={homeHref}
+    newsHref={newsHref}
+    switchHref={switchLocalePath(Astro.url.pathname, other)}
+    switchLabel={lang === "en" ? "🇵🇱 PL" : "🇬🇧 EN"}
+    t={t}
+  />
   <article class="container py-16">
     <header class="mx-auto max-w-3xl">
       <p class="text-sm text-zinc-500">
-        <a href={newsIndexPath(lang)} class="text-zinc-400 hover:text-white">{t.newsPage.backToNews}</a>
-        <span class="mx-2 text-zinc-600">·</span>
-        <a href={homePath(lang)} class="text-zinc-400 hover:text-white">fotonoza</a>
-        <span class="mx-2 text-zinc-600">·</span>
-        <a href={newsArticlePath(otherLocale(lang), post.id)} hreflang={otherLocale(lang)} class="text-zinc-400 hover:text-white">
-          {lang === "en" ? "Polski" : "English"}
+        <a
+          href={newsIndexPath(lang)}
+          class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        >
+          {t.newsPage.backToNews}
         </a>
+        <span class="mx-2 text-zinc-600">·</span>
+        <a
+          href={homePath(lang)}
+          class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        >
+          fotonoza
+        </a>
+        {
+          sibling ? (
+            <>
+              <span class="mx-2 text-zinc-600">·</span>
+              <a
+                href={newsArticlePath(other, storySlug)}
+                hreflang={other}
+                class="text-zinc-400 transition-colors hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              >
+                {lang === "en" ? "Polski" : "English"}
+              </a>
+            </>
+          ) : null
+        }
       </p>
       <time class="mt-4 block text-sm text-zinc-500" datetime={post.data.pubDate.toISOString()}>
         {post.data.pubDate.toLocaleString(lang === "pl" ? "pl-PL" : "en-GB", { timeZone: "UTC" })} UTC
@@ -65,9 +112,36 @@ const title = `${post.data.title} ${t.newsPage.postTitleSuffix}`.trim();
       }
     </header>
     <div
-      class="mx-auto mt-12 max-w-3xl space-y-4 leading-relaxed text-zinc-300 [&_a]:text-sky-400 [&_a]:underline-offset-2 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-zinc-900 [&_code]:px-1 [&_code]:text-zinc-200 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-white [&_li]:my-1 [&_ul]:list-disc [&_ul]:pl-6"
+      class="mx-auto mt-12 max-w-3xl space-y-4 leading-relaxed text-zinc-300 [&_a]:text-yellow-500 [&_a]:underline-offset-2 [&_a]:transition-colors hover:[&_a]:text-yellow-400 hover:[&_a]:underline [&_code]:rounded [&_code]:bg-zinc-900 [&_code]:px-1 [&_code]:text-zinc-200 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-white [&_li]:my-1 [&_ul]:list-disc [&_ul]:pl-6"
     >
       <Content />
     </div>
+    <aside
+      class="mx-auto mt-14 max-w-3xl rounded-xl border border-zinc-800 bg-zinc-950/60 px-6 py-8"
+      aria-labelledby="post-author-heading"
+    >
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+        <img
+          src="/author-avatar.png"
+          alt={t.newsPage.authorAvatarAlt}
+          width={256}
+          height={256}
+          loading="lazy"
+          decoding="async"
+          class="mx-auto h-24 w-24 shrink-0 rounded-2xl border border-zinc-700 object-cover sm:mx-0 sm:h-28 sm:w-28"
+        />
+        <div class="min-w-0 flex-1">
+          <p id="post-author-heading" class="text-xs font-medium uppercase tracking-widest text-zinc-500">
+            {t.newsPage.authorHeading}
+          </p>
+          <p class="mt-3 text-lg font-semibold text-white">{t.newsPage.authorName}</p>
+          <p
+            class="mt-3 text-sm leading-relaxed text-zinc-400 [&_strong]:font-semibold [&_strong]:text-zinc-200"
+            set:html={t.newsPage.authorBio}
+          />
+          <p class="mt-4 text-sm leading-relaxed text-zinc-500">{t.newsPage.authorPlainTalk}</p>
+        </div>
+      </div>
+    </aside>
   </article>
 </BaseLayout>

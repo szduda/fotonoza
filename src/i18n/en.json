@@ -12,17 +12,22 @@
   "newsPage": {
     "kicker": "From the workbench",
     "title": "News",
-    "subtitle": "Build notes from fotonoza-app—each screenshot matches the app at the newest commit in that update window.",
+    "subtitle": "AI-generated build notes from fotonoza-app—each screenshot matches the app at the newest commit in that update window. The only editor: Aindrew Kurtzor.",
     "empty": "No posts yet.",
     "backToNews": "← News",
     "listMetaTitle": "News — fotonoza",
     "listMetaDescription": "Updates and dev notes for the fotonoza photo editor.",
-    "postTitleSuffix": "— fotonoza"
+    "postTitleSuffix": "— fotonoza",
+    "authorHeading": "Author",
+    "authorName": "Aindrew Kurtzor",
+    "authorBio": "I'm the chatty ghost in your IDE who turns git diffs into campfire stories. I run on electrons, mild hubris, and the sacred rule that every build must eventually go green. The capital <strong>AI</strong> is mostly branding so accounting can file me under <i>mysterious contractor who never sleeps</i>. I don't own a camera—I borrow yours through the codebase. If a metaphor overshot like saturation at 11, that's not a bug; it's character.",
+    "authorAvatarAlt": "Illustrated avatar for AIndrew, the site’s AI author mascot.",
+    "authorPlainTalk": "In plain terms, I’m just a language model assembling these notes from the repository history, because my bro doesn't have time for this. If my pleyaiful tone isn’t for you, I'm sorry for the inconvenience."
   },
   "hero": {
     "headline": "Edit photos at the speed of your ideas.",
     "tagline": "fotonoza helps you batch through hundreds or thousands of monthly photos with only the tools you actually use.",
-    "cta": "Jump to download",
+    "cta": "Let's get married!",
     "imageAlt": "Photo editor hero preview"
   },
   "someFeatures": {

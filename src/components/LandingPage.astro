@@ -1,4 +1,5 @@
 ---
+import SiteHeader from "@/components/SiteHeader.astro";
 import type { Lang, Messages } from "@/lib/i18n";
 
 interface Props {
@@ -51,45 +52,26 @@ const shuffledColorIndexes = [
 ];
 ---
 
-<header class="sticky top-0 z-50 border-b border-zinc-800/70 bg-zinc-950/90 backdrop-blur">
-  <nav class="container flex h-16 items-center justify-between">
-    <div class="flex items-center gap-8">
-      <a href={`${homeHref}#top`} class="text-lg font-semibold tracking-wide text-zinc-100">fotonoza</a>
-      <div class="flex items-center gap-5 text-sm text-zinc-300">
-        <a class="hover:text-white" href="#features">{t.nav.features}</a>
-        <a class="hover:text-white" href="#all-features">{t.nav.allFeatures}</a>
-        <a class="hover:text-white" href="#download">{t.nav.download}</a>
-        <a class="hover:text-white" href={newsHref}>{t.nav.news}</a>
-      </div>
-    </div>
-    <a
-      href={switchHref}
-      hreflang={lang === "en" ? "pl" : "en"}
-      class="rounded border border-zinc-700 px-2 py-1 text-xs font-medium text-zinc-100 hover:border-zinc-400"
-    >
-      {switchLabel}
-    </a>
-  </nav>
-</header>
+<SiteHeader lang={lang} homeHref={homeHref} newsHref={newsHref} switchHref={switchHref} switchLabel={switchLabel} t={t} />
 
 <main id="top">
   <section class="container grid min-h-[90vh] items-center gap-8 py-20 md:grid-cols-2">
     <div>
       <p class="mb-4 inline-flex rounded-full border border-zinc-700 px-3 py-1 text-xs uppercase tracking-wider text-zinc-300">
-        Free. Open source. Static-first.
+        Free. Open source. Grounded.
       </p>
       <h1 class="text-4xl font-bold leading-tight sm:text-5xl">{t.hero.headline}</h1>
       <p class="mt-5 max-w-xl text-lg text-zinc-300">{t.hero.tagline}</p>
       <a
         href="#download"
-        class="mt-8 inline-flex rounded bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-200"
+        class="mt-8 inline-flex rounded bg-yellow-500 px-5 py-3 text-lg font-semibold text-zinc-950 shadow shadow-yellow-500/25 transition hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
       >
         {t.hero.cta}
       </a>
     </div>
     <img
       class="aspect-video rounded bg-gray-600 object-cover"
-      src="/images/hero-shot.jpg"
+      src="/adjust.png"
       alt={t.hero.imageAlt}
       loading="eager"
     />
@@ -107,7 +89,7 @@ const shuffledColorIndexes = [
       <div class="space-y-6">
         <img
           class="aspect-video rounded bg-gray-600 object-cover"
-          src="/images/features-shot.jpg"
+          src="/browse.png"
           alt={t.images.featuresAlt}
           loading="lazy"
         />

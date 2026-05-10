@@ -2,6 +2,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 /**
+ * Writes English source under `src/content/progress/en/{slug}.md`.
+ * Add `src/content/progress/pl/{slug}.md` with `locale: pl` and the same
+ * `image`, `pubDate`, `range*`, `commitShas` when translating (do not use a
+ * frontmatter key named `slug` — Astro reserves it for content ids).
+ */
+
+/**
  * @param {{
  *   fotonozaRoot: string;
  *   slug: string;
@@ -29,11 +36,12 @@ export async function writeProgressArtifacts(opts) {
     bodyMarkdown
   } = opts;
 
-  const mdPath = join(fotonozaRoot, "src", "content", "progress", `${slug}.md`);
+  const mdPath = join(fotonozaRoot, "src", "content", "progress", "en", `${slug}.md`);
   await mkdir(dirname(mdPath), { recursive: true });
 
   const fm = [
     "---",
+    `locale: "en"`,
     `title: ${JSON.stringify(title)}`,
     `description: ${JSON.stringify(description)}`,
     `pubDate: ${JSON.stringify(pubDateIso)}`,
