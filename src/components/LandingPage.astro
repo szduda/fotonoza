@@ -47,6 +47,9 @@ const shuffledColorIndexes = [
   12, 1, 23, 8, 16, 4, 19, 6, 21, 14, 9, 24, 11, 3, 18, 0, 17, 10, 22, 5, 15, 2,
   13, 20, 7,
 ];
+
+const dlLinkClass =
+  "rounded border border-yellow-200/20 p-3 text-center font-medium hover:bg-yellow-200/3";
 ---
 
 <SiteHeader
@@ -80,7 +83,7 @@ const shuffledColorIndexes = [
       </a>
     </div>
     <img
-      class="aspect-video rounded bg-gray-600 object-cover"
+      class="aspect-video rounded border border-yellow-500/10 bg-gray-600 object-cover"
       src="/adjust.png"
       alt={t.hero.imageAlt}
       loading="eager"
@@ -104,7 +107,7 @@ const shuffledColorIndexes = [
       </div>
       <div class="space-y-6">
         <img
-          class="aspect-video rounded bg-gray-600 object-cover"
+          class="aspect-video rounded border border-yellow-500/10 bg-gray-600 object-cover"
           src="/browse.png"
           alt={t.images.featuresAlt}
           loading="lazy"
@@ -145,38 +148,38 @@ const shuffledColorIndexes = [
       <h2 class="text-3xl font-semibold">{t.download.title}</h2>
       <p class="mt-3 text-mist-400">{t.download.subtitle}</p>
       <div class="mt-8 grid gap-4 md:grid-cols-3 text-mist-300/90">
-        <div class="rounded border border-mist-800 p-5">
-          <h3 class="text-lg font-semibold text-mist-400">{t.download.linux.label}</h3>
+        <div class="rounded border border-mist-800/70 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">
+            {t.download.linux.label}
+          </h3>
           <div class="mt-4 grid grid-cols-2 gap-2">
             {
               t.download.linux.packages.map((item) => (
-                <div class="rounded border border-mist-700 p-3 text-center font-medium">
-                  {item}
-                </div>
+                <div class={dlLinkClass}>{item}</div>
               ))
             }
           </div>
         </div>
-        <div class="rounded border border-mist-800 p-5">
-          <h3 class="text-lg font-semibold text-mist-400">{t.download.windows.label}</h3>
+        <div class="rounded border border-mist-800/70 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">
+            {t.download.windows.label}
+          </h3>
           <div class="mt-4 grid gap-2">
             {
               t.download.windows.packages.map((item) => (
-                <div class="rounded border border-mist-700 p-3 text-center font-medium">
-                  {item}
-                </div>
+                <div class={dlLinkClass}>{item}</div>
               ))
             }
           </div>
         </div>
-        <div class="rounded border border-mist-800 p-5">
-          <h3 class="text-lg font-semibold text-mist-400">{t.download.macos.label}</h3>
+        <div class="rounded border border-mist-800/70 p-5">
+          <h3 class="text-lg font-semibold text-mist-400">
+            {t.download.macos.label}
+          </h3>
           <div class="mt-4 grid gap-2">
             {
               t.download.macos.packages.map((item) => (
-                <div class="rounded border border-mist-700 p-3 text-center font-medium">
-                  {item}
-                </div>
+                <div class={dlLinkClass}>{item}</div>
               ))
             }
           </div>
