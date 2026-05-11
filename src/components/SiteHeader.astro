@@ -34,6 +34,7 @@ const linkStyle =
       <a
         href={`${homeHref}#top`}
         class={`flex items-center gap-2 text-lg font-semibold tracking-wide text-mist-300 ${linkStyle}`}
+        data-track="nav_logo"
       >
         <img
           src="/fotonoza-logo.svg"
@@ -47,15 +48,15 @@ const linkStyle =
       </a>
 
       <div class="flex items-center gap-5 text-sm text-mist-400">
-        <a class={linkStyle} href={`${homeAnchorBase}#features`}>
+        <a class={linkStyle} href={`${homeAnchorBase}#features`} data-track="nav_features">
           {t.nav.features}
         </a>
 
-        <a class={linkStyle} href={`${homeAnchorBase}#download`}>
+        <a class={linkStyle} href={`${homeAnchorBase}#download`} data-track="nav_download">
           {t.nav.download}
         </a>
 
-        <a class={linkStyle} href={newsHref}>
+        <a class={linkStyle} href={newsHref} data-track="nav_news">
           {t.nav.news}
         </a>
       </div>
@@ -65,6 +66,7 @@ const linkStyle =
       href={switchHref}
       hreflang={lang === "en" ? "pl" : "en"}
       class={`rounded border border-mist-700 px-2 py-1 text-xs font-medium text-mist-400 hover:border-yellow-300/30 hover:bg-yellow-200/5 ${linkStyle}`}
+      data-track="lang_switch"
     >
       {switchLabel}
     </a>

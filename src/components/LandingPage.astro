@@ -48,8 +48,8 @@ const shuffledColorIndexes = [
   13, 20, 7,
 ];
 
-const dlLinkClass =
-  "rounded border border-yellow-200/20 p-3 text-center font-medium hover:bg-yellow-200/3";
+const dlBtnClass =
+  "cursor-pointer rounded border border-yellow-200/20 p-3 text-center font-medium hover:bg-yellow-200/3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-mist-950";
 ---
 
 <SiteHeader
@@ -78,6 +78,7 @@ const dlLinkClass =
       <a
         href="#download"
         class="mt-8 inline-flex rounded bg-yellow-300 px-5 py-3 text-lg font-semibold text-mist-900 shadow shadow-yellow-300/25 transition hover:bg-yellow-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-mist-950"
+        data-track="cta_hero"
       >
         {t.hero.cta}
       </a>
@@ -154,8 +155,15 @@ const dlLinkClass =
           </h3>
           <div class="mt-4 grid grid-cols-2 gap-2">
             {
-              t.download.linux.packages.map((item) => (
-                <div class={dlLinkClass}>{item}</div>
+              t.download.linux.packages.map((item, idx) => (
+                <button
+                  type="button"
+                  class={dlBtnClass}
+                  data-track="download_linux"
+                  data-track-target-id={String(idx)}
+                >
+                  {item}
+                </button>
               ))
             }
           </div>
@@ -166,8 +174,15 @@ const dlLinkClass =
           </h3>
           <div class="mt-4 grid gap-2">
             {
-              t.download.windows.packages.map((item) => (
-                <div class={dlLinkClass}>{item}</div>
+              t.download.windows.packages.map((item, idx) => (
+                <button
+                  type="button"
+                  class={dlBtnClass}
+                  data-track="download_windows"
+                  data-track-target-id={String(idx)}
+                >
+                  {item}
+                </button>
               ))
             }
           </div>
@@ -178,8 +193,15 @@ const dlLinkClass =
           </h3>
           <div class="mt-4 grid gap-2">
             {
-              t.download.macos.packages.map((item) => (
-                <div class={dlLinkClass}>{item}</div>
+              t.download.macos.packages.map((item, idx) => (
+                <button
+                  type="button"
+                  class={dlBtnClass}
+                  data-track="download_macos"
+                  data-track-target-id={String(idx)}
+                >
+                  {item}
+                </button>
               ))
             }
           </div>

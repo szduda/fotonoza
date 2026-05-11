@@ -74,6 +74,8 @@ const path = newsIndexPath(lang);
               <li>
                 <a
                   href={newsArticlePath(lang, slug)}
+                  data-track="news_article_list"
+                  data-track-target-id={slug}
                   class:list={[
                     "group flex flex-col gap-4 rounded-xl border border-mist-800 bg-mist-900/40 p-6 transition hover:border-yellow-300/20 hover:shadow-md hover:shadow-yellow-300/5 sm:items-stretch sm:gap-6",
                     hasImage &&
