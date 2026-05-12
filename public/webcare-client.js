@@ -16,7 +16,7 @@
       }
       return s;
     } catch (e) {
-      return "";
+      return null;
     }
   }
 
@@ -24,10 +24,18 @@
     var url = d.trackingBase + "/purr/" + d.trackingCode;
     var lang =
       document.documentElement.lang === "pl" ? "pl" : "en";
+    var seed = fpSeed();
+    if (!seed) {
+      seed =
+        (typeof crypto !== "undefined" &&
+          crypto.randomUUID &&
+          crypto.randomUUID()) ||
+        "anon-" + String(Date.now()) + "-" + String(Math.random()).slice(2);
+    }
     var body = Object.assign(
       {
         public_key: d.trackingPk,
-        fp_seed: fpSeed(),
+        fp_seed: seed,
         occurred_at: new Date().toISOString(),
         locale: lang,
       },
@@ -85,5 +93,7 @@
     event_name: "page_open",
     path: location.pathname + location.search,
     referrer_url: referrerOut,
+    target_id: null,
+    target_href: null,
   });
 })();
