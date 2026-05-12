@@ -168,17 +168,20 @@ const ogImage = new URL("/images/og-fotonoza.jpg", baseUrl).toString();
   );
 
   var ref = document.referrer;
+  var referrerOut = ref || null;
   try {
     if (ref) {
       var ru = new URL(ref);
-      if (ru.host === location.host) return;
+      if (ru.host === location.host) referrerOut = null;
     }
-  } catch (err) {}
+  } catch (err) {
+    referrerOut = null;
+  }
   post({
     event_type: "page_open",
     event_name: "page_open",
     path: location.pathname + location.search,
-    referrer_url: ref || null,
+    referrer_url: referrerOut,
   });
 })();`}
         </script>
