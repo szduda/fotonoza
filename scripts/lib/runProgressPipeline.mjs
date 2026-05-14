@@ -74,7 +74,10 @@ async function buildAppBundleForPreview(p) {
  *   endUtc: Date;
  *   previewOrigin?: string;
  * }} opts
- * @returns {Promise<{ slug: string; pngPath: string; mdPath: string; runId: string; shas: string[] }>}
+ * @returns {Promise<
+ *   | { ok: true; slug: string; pngPath: string; mdPath: string; runId: string; shas: string[] }
+ *   | { ok: false; code: "NO_COMMITS"; message: string }
+ * >}
  */
 export async function runProgressPipeline(opts) {
   const previewOrigin = (opts.previewOrigin ?? process.env.FOTONOZA_PREVIEW_URL ?? "http://127.0.0.1:4173").replace(
@@ -91,9 +94,7 @@ export async function runProgressPipeline(opts) {
   if (commits.length === 0) {
     const msg =
       `No commits in fotonoza-app with author date in [${opts.startUtc.toISOString()}, ${opts.endUtc.toISOString()}] (UTC).`;
-    const err = new Error(msg);
-    err.code = "NO_COMMITS";
-    throw err;
+    return { ok: false, code: "NO_COMMITS", message: msg };
   }
 
   const shas = commits.map((c) => c.sha);
@@ -154,5 +155,5 @@ export async function runProgressPipeline(opts) {
     bodyMarkdown: post.body
   });
 
-  return { slug, pngPath, mdPath, runId, shas };
+  return { ok: true, slug, pngPath, mdPath, runId, shas };
 }

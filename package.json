@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "vercel-build": "npm run build",
-    "backfill": "node scripts/backfill.mjs"
+    "backfill": "node scripts/backfill.mjs",
+    "cron:daily-progress": "node scripts/cronDailyWindow.mjs --push"
   },
   "dependencies": {
     "@cursor/sdk": "^1.0.12",

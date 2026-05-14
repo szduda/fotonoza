@@ -3,8 +3,10 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "trailingSlash": true,
-  "redirects": [
-    { "source": "/progress", "destination": "/en/news/", "permanent": true },
-    { "source": "/progress/:id/", "destination": "/en/news/:id/", "permanent": true }
+  "crons": [
+    {
+      "path": "/api/cron/daily-progress/",
+      "schedule": "37 13 * * *"
+    }
   ]
 }

@@ -6,6 +6,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** Root of the fotonoza marketing repo (contains package.json, src/, public/). */
 export function getFotonozaRoot() {
+  if (process.env.VERCEL) {
+    return process.cwd();
+  }
   return resolve(__dirname, "../..");
 }
 

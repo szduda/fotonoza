@@ -7,8 +7,7 @@ export default defineConfig({
   output: "static",
   trailingSlash: "ignore",
   redirects: {
-    "/": "/en/",
-    "/progress/": "/en/news/"
+    "/": "/en/"
   },
   vite: {
     plugins: [tailwindcss()]

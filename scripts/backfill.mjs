@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 import "dotenv/config";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { parseYyMmDdHhMmUtc } from "./lib/parseYyMmDdHhMm.mjs";
 import { getFotonozaRoot, resolveAppRoot } from "./lib/paths.mjs";
-import { runProgressPipeline } from "./lib/runProgressPipeline.mjs";
-
-const execFileAsync = promisify(execFile);
+import { runBackfillRange } from "./lib/backfillCore.mjs";
 
 function printUsage() {
   console.error(`Usage: npm run backfill -- <yyMMddHHmm> <yyMMddHHmm> [options]
@@ -47,48 +43,6 @@ function argvFlags(argv) {
   return { ...out, positional: rest };
 }
 
-async function maybeGitCommitPushPr({ fotonozaRoot, slug, flags }) {
-  if (!flags.commit) return;
-  const branch = `progress/backfill-${slug}`;
-  console.log(`[git] branch ${branch}`);
-  await execFileAsync("git", ["-C", fotonozaRoot, "checkout", "-B", branch]);
-  await execFileAsync("git", ["-C", fotonozaRoot, "add", "src/content/progress", "public/progress"]);
-  try {
-    await execFileAsync("git", ["-C", fotonozaRoot, "diff", "--cached", "--quiet"]);
-    console.log("[git] nothing to commit (already committed?)");
-    return;
-  } catch (e) {
-    const code = typeof e === "object" && e && "code" in e ? e.code : undefined;
-    if (code !== 1) throw e;
-  }
-  await execFileAsync("git", ["-C", fotonozaRoot, "commit", "-m", `progress: backfill ${slug}`]);
-  if (!flags.push) {
-    console.log("[git] committed on", branch, "(omit --push to stop here)");
-    return;
-  }
-  await execFileAsync("git", ["-C", fotonozaRoot, "push", "-u", "origin", branch]);
-  if (flags.noPr) return;
-  try {
-    const { stdout } = await execFileAsync(
-      "gh",
-      [
-        "pr",
-        "create",
-        "--head",
-        branch,
-        "--title",
-        `Progress: ${slug}`,
-        "--body",
-        `Automated backfill post \`${slug}\`.`
-      ],
-      { cwd: fotonozaRoot }
-    );
-    console.log(stdout.trim());
-  } catch (e) {
-    console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", e.message);
-  }
-}
-
 async function main() {
   const flags = argvFlags(process.argv);
   const [a, b] = flags.positional;
@@ -114,23 +68,21 @@ async function main() {
   const appRoot = resolveAppRoot(flags.appRoot);
 
   try {
-    const { slug } = await runProgressPipeline({
+    const result = await runBackfillRange({
+      startToken: a,
+      endToken: b,
       apiKey,
       fotonozaRoot,
       appRoot,
-      rangeStartToken: a,
-      rangeEndToken: b,
-      startUtc,
-      endUtc
+      flags
     });
-    console.log(`[backfill] wrote ${slug}`);
-    await maybeGitCommitPushPr({ fotonozaRoot, slug, flags });
+    if (result.outcome === "no_commits") {
+      console.log(result.message);
+      process.exit(0);
+    }
+    console.log(`[backfill] wrote ${result.slug}`);
     process.exit(0);
   } catch (e) {
-    if (e && typeof e === "object" && "code" in e && e.code === "NO_COMMITS") {
-      console.error(e.message);
-      process.exit(2);
-    }
     console.error(e);
     process.exit(1);
   }
