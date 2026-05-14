@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { URL } from "node:url";
 import { promisify } from "node:util";
+import { gitExec, gitExecRaw } from "./gitExec.mjs";
 import { parseYyMmDdHhMmUtc } from "./parseYyMmDdHhMm.mjs";
 import { runProgressPipeline } from "./runProgressPipeline.mjs";
 
@@ -27,17 +28,21 @@ export async function maybeGitCommitPushPr(p) {
   if (!flags.commit) return;
   const branch = `progress/backfill-${slug}`;
   console.log(`[git] branch ${branch}`);
-  await execFileAsync("git", ["-C", fotonozaRoot, "checkout", "-B", branch]);
-  await execFileAsync("git", ["-C", fotonozaRoot, "add", "src/content/progress", "public/progress"]);
-  try {
-    await execFileAsync("git", ["-C", fotonozaRoot, "diff", "--cached", "--quiet"]);
+  await gitExec(fotonozaRoot, ["checkout", "-B", branch]);
+  await gitExec(fotonozaRoot, ["add", "src/content/progress", "public/progress"]);
+
+  const diffR = await gitExecRaw(fotonozaRoot, ["diff", "--cached", "--quiet"]);
+  if (diffR.exitCode === 0) {
     console.log("[git] nothing to commit (already committed?)");
     return;
-  } catch (e) {
-    const code = typeof e === "object" && e && "code" in e ? e.code : undefined;
-    if (code !== 1) throw e;
   }
-  await execFileAsync("git", ["-C", fotonozaRoot, "commit", "-m", `progress: backfill ${slug}`]);
+  if (diffR.exitCode !== 1) {
+    const err = new Error(diffR.stderr.trim() || `git diff exited ${diffR.exitCode}`);
+    err.code = diffR.exitCode;
+    throw err;
+  }
+
+  await gitExec(fotonozaRoot, ["commit", "-m", `progress: backfill ${slug}`]);
   if (!flags.push) {
     console.log("[git] committed on", branch, "(omit --push to stop here)");
     return;
@@ -50,9 +55,9 @@ export async function maybeGitCommitPushPr(p) {
   }
 
   if (siteGitUrl) {
-    await execFileAsync("git", ["-C", fotonozaRoot, "push", siteGitUrl, `HEAD:refs/heads/${branch}`]);
+    await gitExec(fotonozaRoot, ["push", siteGitUrl, `HEAD:refs/heads/${branch}`]);
   } else {
-    await execFileAsync("git", ["-C", fotonozaRoot, "push", "-u", "origin", branch]);
+    await gitExec(fotonozaRoot, ["push", "-u", "origin", branch]);
   }
 
   if (flags.noPr) return;

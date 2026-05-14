@@ -1,18 +1,15 @@
 import type { APIRoute } from "astro";
-import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { promisify } from "node:util";
 import { ensureFotonozaAppForVercel } from "../../../../scripts/lib/ensureFotonozaAppForVercel.mjs";
 import { formatYyMmDdHhMmUtc } from "../../../../scripts/lib/formatYyMmDdHhMmUtc.mjs";
+import { gitExec } from "../../../../scripts/lib/gitExec.mjs";
 import { runBackfillRange } from "../../../../scripts/lib/backfillCore.mjs";
 import { getFotonozaRoot, resolveAppRoot } from "../../../../scripts/lib/paths.mjs";
 
 export const prerender = false;
 
 const LOG_SCOPE = "cron:daily-progress";
-
-const execFileAsync = promisify(execFile);
 
 type LogLevel = "info" | "warn" | "error";
 
@@ -110,7 +107,7 @@ async function vercelCronPreflight(): Promise<Response | null> {
   }
 
   try {
-    const { stdout } = await execFileAsync("git", ["--version"], { timeout: 5000 });
+    const { stdout } = await gitExec(process.cwd(), ["--version"]);
     cronLog("info", "preflight_git_cli_ok", { version: stdout.trim() });
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);

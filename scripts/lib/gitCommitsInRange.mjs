@@ -1,7 +1,4 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-
-const execFileAsync = promisify(execFile);
+import { gitExec } from "./gitExec.mjs";
 
 /**
  * List commits in `appRoot` whose **author date** (Unix seconds) lies in
@@ -12,11 +9,9 @@ export async function listCommitsByAuthorDateInRange(opts) {
   const { appRoot, startInclusive, endInclusive } = opts;
   const startSec = Math.floor(startInclusive.getTime() / 1000);
   const endSec = Math.floor(endInclusive.getTime() / 1000);
-  const { stdout } = await execFileAsync(
-    "git",
-    ["-C", appRoot, "log", "--format=%H %at", "--reverse", "HEAD"],
-    { maxBuffer: 50 * 1024 * 1024 }
-  );
+  const { stdout } = await gitExec(appRoot, ["log", "--format=%H %at", "--reverse", "HEAD"], {
+    maxBuffer: 50 * 1024 * 1024
+  });
   const out = [];
   for (const line of stdout.trim().split("\n")) {
     if (!line) continue;
@@ -40,20 +35,13 @@ export async function formatGitPayload(opts) {
   if (shas.length === 0) return "(no commits)";
   const lines = [];
   for (const sha of shas) {
-    const { stdout: subj } = await execFileAsync("git", ["-C", appRoot, "log", "-1", "--format=%s", sha]);
+    const { stdout: subj } = await gitExec(appRoot, ["log", "-1", "--format=%s", sha]);
     lines.push(`${sha.slice(0, 7)} ${subj.trim()}`);
   }
   const statParts = [];
   for (const sha of shas) {
     try {
-      const { stdout } = await execFileAsync("git", [
-        "-C",
-        appRoot,
-        "show",
-        "--stat",
-        "--format=",
-        sha
-      ]);
+      const { stdout } = await gitExec(appRoot, ["show", "--stat", "--format=", sha]);
       statParts.push(stdout.trim());
     } catch {
       statParts.push(`${sha.slice(0, 7)} (stat unavailable)`);
@@ -74,20 +62,20 @@ export async function formatGitPayload(opts) {
  */
 export async function withAppRepoAtCommitForScreenshot(opts) {
   const { appRoot, targetSha, fn } = opts;
-  const { stdout: headShaOut } = await execFileAsync("git", ["-C", appRoot, "rev-parse", "HEAD"]);
+  const { stdout: headShaOut } = await gitExec(appRoot, ["rev-parse", "HEAD"]);
   const savedHead = headShaOut.trim();
-  const { stdout: abbrevOut } = await execFileAsync("git", ["-C", appRoot, "rev-parse", "--abbrev-ref", "HEAD"]);
+  const { stdout: abbrevOut } = await gitExec(appRoot, ["rev-parse", "--abbrev-ref", "HEAD"]);
   const abbrevRef = abbrevOut.trim();
 
-  await execFileAsync("git", ["-C", appRoot, "checkout", "--detach", targetSha]);
+  await gitExec(appRoot, ["checkout", "--detach", targetSha]);
   try {
     return await fn();
   } finally {
     try {
       if (abbrevRef !== "HEAD") {
-        await execFileAsync("git", ["-C", appRoot, "checkout", abbrevRef]);
+        await gitExec(appRoot, ["checkout", abbrevRef]);
       } else {
-        await execFileAsync("git", ["-C", appRoot, "checkout", savedHead]);
+        await gitExec(appRoot, ["checkout", savedHead]);
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -98,4 +86,3 @@ export async function withAppRepoAtCommitForScreenshot(opts) {
     }
   }
 }
-
