@@ -3,6 +3,7 @@ import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { ensureFotonozaAppForVercel } from "../../../../scripts/lib/ensureFotonozaAppForVercel.mjs";
 import { formatYyMmDdHhMmUtc } from "../../../../scripts/lib/formatYyMmDdHhMmUtc.mjs";
 import { runBackfillRange } from "../../../../scripts/lib/backfillCore.mjs";
 import { getFotonozaRoot, resolveAppRoot } from "../../../../scripts/lib/paths.mjs";
@@ -74,19 +75,6 @@ async function vercelCronPreflight(): Promise<Response | null> {
   }
 
   cronLog("info", "preflight_vercel_start", {});
-
-  if (!process.env.FOTONOZA_APP_ROOT?.trim()) {
-    return failResponse(
-      503,
-      {
-        ok: false,
-        code: "MISSING_FOTONOZA_APP_ROOT",
-        error:
-          "On Vercel, set FOTONOZA_APP_ROOT to an absolute path of a full fotonoza-app git clone (with .git). The default sibling ../fotonoza-app is not present in serverless."
-      },
-      "error"
-    );
-  }
 
   let appRoot: string;
   try {
@@ -176,6 +164,25 @@ export const GET: APIRoute = async ({ request }) => {
     return failResponse(503, { ok: false, error: "CURSOR_API_KEY is not configured" }, "error");
   }
   cronLog("info", "config_ok", { hasCursorApiKey: true, vercelId });
+
+  if (process.env.VERCEL) {
+    try {
+      await ensureFotonozaAppForVercel();
+      cronLog("info", "ensure_fotonoza_app_ok", { vercelId });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      cronLog("error", "ensure_fotonoza_app_failed", { error: msg, vercelId });
+      return failResponse(
+        503,
+        {
+          ok: false,
+          code: "MISSING_FOTONOZA_APP_CONFIG",
+          error: msg
+        },
+        "error"
+      );
+    }
+  }
 
   const preflight = await vercelCronPreflight();
   if (preflight) return preflight;
