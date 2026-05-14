@@ -176,7 +176,7 @@ export const GET: APIRoute = async ({ request }) => {
         503,
         {
           ok: false,
-          code: "MISSING_FOTONOZA_APP_CONFIG",
+          code: "FOTONOZA_APP_SETUP",
           error: msg
         },
         "error"
