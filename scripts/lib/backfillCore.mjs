@@ -102,9 +102,17 @@ export async function maybeGitCommitPushPr(p) {
   }
 
   try {
+    const ghEnv = { ...process.env };
+    const prCreatePat = process.env.GH_PR_CREATE_TOKEN?.trim();
+    if (prCreatePat) {
+      ghEnv.GH_TOKEN = prCreatePat;
+      if (inGithubActions) {
+        console.log("[git] gh pr create: using GH_PR_CREATE_TOKEN (PAT) for GitHub API.");
+      }
+    }
     const { stdout } = await execFileAsync("gh", ghArgs, {
       cwd: fotonozaRoot,
-      env: { ...process.env }
+      env: ghEnv
     });
     console.log(stdout.trim());
   } catch (e) {
@@ -114,7 +122,11 @@ export async function maybeGitCommitPushPr(p) {
     const detail = [msg, stderr].filter(Boolean).join("\n");
     if (inGithubActions) {
       console.error("[git] gh pr create failed in Actions:\n", detail);
-      throw new Error(`gh pr create failed: ${detail}`);
+      const hint =
+        /not permitted to create or approve pull requests/i.test(detail)
+          ? " Enable: repo Settings → Actions → General → Workflow permissions → “Read and write permissions” and check “Allow GitHub Actions to create and approve pull requests”. Or add repository secret GH_PR_CREATE_TOKEN (PAT with Pull requests: Write on this repo) for gh only."
+          : "";
+      throw new Error(`gh pr create failed: ${detail}${hint}`);
     }
     console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", detail);
   }

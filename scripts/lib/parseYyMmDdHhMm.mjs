@@ -54,3 +54,15 @@ export function utcCalendarDayBoundsAsTokens(daysAgo = 1) {
   const end = new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 23, 59, 0, 0));
   return { startToken: formatYyMmDdHhMmUtc(start), endToken: formatYyMmDdHhMmUtc(end) };
 }
+
+/** Previous UTC calendar day at 00:00 (instant). */
+export function utcPreviousCalendarDayMidnight() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 0, 0, 0, 0));
+}
+
+/** Next UTC calendar day after “today” in UTC at 00:00 (i.e. today + 1 day at 00:00). */
+export function utcNextCalendarDayMidnight() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0));
+}

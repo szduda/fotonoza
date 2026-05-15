@@ -8,8 +8,11 @@ import { appendFileSync, existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { maybeGitCommitPushPr } from "./lib/backfillCore.mjs";
 import {
+  formatYyMmDdHhMmUtc,
   parseYyMmDdHhMmUtc,
-  utcCalendarDayBoundsAsTokens
+  utcCalendarDayBoundsAsTokens,
+  utcNextCalendarDayMidnight,
+  utcPreviousCalendarDayMidnight
 } from "./lib/parseYyMmDdHhMm.mjs";
 import { getFotonozaRoot, resolveAppRoot } from "./lib/paths.mjs";
 import { planProgressRange, runProgressPipelineFromPlan } from "./lib/runProgressPipeline.mjs";
@@ -19,10 +22,34 @@ function printUsage() {
   npm run progress:ci -- <yyMMddHHmm> <yyMMddHHmm>   UTC inclusive author-date window
   npm run progress:ci -- --yesterday-utc             previous full UTC calendar day (00:00–23:59)
 
+Omit either token (pass "" "") to apply defaults (UTC):
+  start empty → previous calendar day at 00:00
+  end empty   → (today + 1 calendar day) at 00:00
+
 Environment:
   CURSOR_API_KEY     Required
   FOTONOZA_APP_ROOT  Required in CI (path to fotonoza-app checkout)
 `);
+}
+
+/**
+ * @param {string} rawStart
+ * @param {string} rawEnd
+ */
+function resolveDispatchRangeTokens(rawStart, rawEnd) {
+  const s = typeof rawStart === "string" ? rawStart.trim() : "";
+  const e = typeof rawEnd === "string" ? rawEnd.trim() : "";
+  const startToken = s || formatYyMmDdHhMmUtc(utcPreviousCalendarDayMidnight());
+  const endToken = e || formatYyMmDdHhMmUtc(utcNextCalendarDayMidnight());
+  for (const [label, t] of [
+    ["start", startToken],
+    ["end", endToken]
+  ]) {
+    if (!/^\d{10}$/.test(t)) {
+      throw new Error(`${label}: expected yyMMddHHmm (10 digits) or leave empty for default, got ${JSON.stringify(t)}`);
+    }
+  }
+  return { startToken, endToken };
 }
 
 function appendStepSummary(text) {
@@ -57,14 +84,11 @@ async function main() {
     const b = utcCalendarDayBoundsAsTokens(1);
     startToken = b.startToken;
     endToken = b.endToken;
+  } else if (flags.positional.length === 2) {
+    ({ startToken, endToken } = resolveDispatchRangeTokens(flags.positional[0], flags.positional[1]));
   } else {
-    const [a, b] = flags.positional;
-    if (!a || !b) {
-      printUsage();
-      process.exit(64);
-    }
-    startToken = a;
-    endToken = b;
+    printUsage();
+    process.exit(64);
   }
 
   const apiKey = process.env.CURSOR_API_KEY;
