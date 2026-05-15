@@ -1,0 +1,97 @@
+name: Progress post (Cursor + PR)
+
+# Manual: Actions → this workflow → Run workflow (optional yyMMddHHmm range).
+# Scheduled: previous UTC calendar day (scripts/ciProgress.mjs --yesterday-utc).
+# Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (private fotonoza-app clone URL with PAT, see .env.example).
+
+on:
+  schedule:
+    # Daily 06:45 UTC — edit to taste
+    - cron: "45 6 * * *"
+  workflow_dispatch:
+    inputs:
+      range_start:
+        description: "yyMMddHHmm UTC start (inclusive). Leave empty to use previous UTC calendar day."
+        required: false
+        type: string
+      range_end:
+        description: "yyMMddHHmm UTC end (inclusive). Leave empty to use previous UTC calendar day."
+        required: false
+        type: string
+
+concurrency:
+  group: progress-generate-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      FOTONOZA_APP_ROOT: ${{ github.workspace }}/fotonoza-app
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone private fotonoza-app
+        env:
+          FOTONOZA_APP_GIT_URL: ${{ secrets.FOTONOZA_APP_GIT_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FOTONOZA_APP_GIT_URL}" ]; then
+            echo "::error::Set repository secret FOTONOZA_APP_GIT_URL to an HTTPS clone URL with PAT (Contents read on fotonoza-app), e.g. https://x-access-token:<PAT>@github.com/<org>/fotonoza-app.git"
+            exit 1
+          fi
+          git clone "${FOTONOZA_APP_GIT_URL}" "${GITHUB_WORKSPACE}/fotonoza-app"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies (fotonoza)
+        run: npm ci
+
+      - name: Configure git for commits
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Use GITHUB_TOKEN for push
+        run: git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+      - name: Require CURSOR_API_KEY
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          if [ -z "$CURSOR_API_KEY" ]; then
+            echo "::error::Add repository secret CURSOR_API_KEY (Cursor dashboard → API keys)."
+            exit 1
+          fi
+
+      - name: Run progress pipeline (git payload → Cursor → PR)
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          set -euo pipefail
+          RS="${{ github.event.inputs.range_start || '' }}"
+          RE="${{ github.event.inputs.range_end || '' }}"
+          if [ -n "$RS" ] && [ -n "$RE" ]; then
+            node scripts/ciProgress.mjs "$RS" "$RE"
+          elif [ -n "$RS" ] || [ -n "$RE" ]; then
+            echo "::error::Provide both range_start and range_end, or leave both empty for --yesterday-utc."
+            exit 1
+          else
+            node scripts/ciProgress.mjs --yesterday-utc
+          fi
+
+      - name: Upload git payload artifact
+        if: always() && hashFiles('git-progress-payload.txt') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: progress-git-payload
+          path: git-progress-payload.txt

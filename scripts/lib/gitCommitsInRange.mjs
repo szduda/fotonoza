@@ -1,4 +1,20 @@
-import { gitExec } from "./gitExec.mjs";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
+
+/**
+ * @param {string} appRoot
+ * @param {string[]} args
+ * @param {{ maxBuffer?: number }} [extra]
+ */
+async function git(appRoot, args, extra = {}) {
+  const { stdout } = await execFileAsync("git", ["-C", appRoot, ...args], {
+    encoding: "utf8",
+    maxBuffer: extra.maxBuffer ?? 50 * 1024 * 1024
+  });
+  return stdout;
+}
 
 /**
  * List commits in `appRoot` whose **author date** (Unix seconds) lies in
@@ -9,7 +25,7 @@ export async function listCommitsByAuthorDateInRange(opts) {
   const { appRoot, startInclusive, endInclusive } = opts;
   const startSec = Math.floor(startInclusive.getTime() / 1000);
   const endSec = Math.floor(endInclusive.getTime() / 1000);
-  const { stdout } = await gitExec(appRoot, ["log", "--format=%H %at", "--reverse", "HEAD"], {
+  const stdout = await git(appRoot, ["log", "--format=%H %at", "--reverse", "HEAD"], {
     maxBuffer: 50 * 1024 * 1024
   });
   const out = [];
@@ -35,54 +51,18 @@ export async function formatGitPayload(opts) {
   if (shas.length === 0) return "(no commits)";
   const lines = [];
   for (const sha of shas) {
-    const { stdout: subj } = await gitExec(appRoot, ["log", "-1", "--format=%s", sha]);
+    const subj = await git(appRoot, ["log", "-1", "--format=%s", sha]);
     lines.push(`${sha.slice(0, 7)} ${subj.trim()}`);
   }
   const statParts = [];
   for (const sha of shas) {
     try {
-      const { stdout } = await gitExec(appRoot, ["show", "--stat", "--format=", sha]);
-      statParts.push(stdout.trim());
+      const block = await git(appRoot, ["show", "--stat", "--format=", sha]);
+      statParts.push(block.trim());
     } catch {
       statParts.push(`${sha.slice(0, 7)} (stat unavailable)`);
     }
   }
   const statBlock = statParts.join("\n\n---\n\n");
   return `Commits (${shas.length}):\n${lines.join("\n")}\n\nPer-commit stats:\n${statBlock}`;
-}
-
-/**
- * Runs `fn` with fotonoza-app checked out at `targetSha` (detached), then restores
- * the previous branch or detached HEAD. Used so build + Playwright match the
- * newest commit in the backfill window.
- *
- * @template T
- * @param {{ appRoot: string; targetSha: string; fn: () => Promise<T> }} opts
- * @returns {Promise<T>}
- */
-export async function withAppRepoAtCommitForScreenshot(opts) {
-  const { appRoot, targetSha, fn } = opts;
-  const { stdout: headShaOut } = await gitExec(appRoot, ["rev-parse", "HEAD"]);
-  const savedHead = headShaOut.trim();
-  const { stdout: abbrevOut } = await gitExec(appRoot, ["rev-parse", "--abbrev-ref", "HEAD"]);
-  const abbrevRef = abbrevOut.trim();
-
-  await gitExec(appRoot, ["checkout", "--detach", targetSha]);
-  try {
-    return await fn();
-  } finally {
-    try {
-      if (abbrevRef !== "HEAD") {
-        await gitExec(appRoot, ["checkout", abbrevRef]);
-      } else {
-        await gitExec(appRoot, ["checkout", savedHead]);
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      throw new Error(
-        `Failed to restore fotonoza-app git state after screenshot (was ${savedHead} / ${abbrevRef}). ` +
-          `Check out your branch manually. ${msg}`
-      );
-    }
-  }
 }

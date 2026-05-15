@@ -26,3 +26,31 @@ export function parseYyMmDdHhMmUtc(token) {
   }
   return d;
 }
+
+/**
+ * Format a UTC instant as `yyMMddHHmm` (same contract as {@link parseYyMmDdHhMmUtc}).
+ * @param {Date} d
+ * @returns {string}
+ */
+export function formatYyMmDdHhMmUtc(d) {
+  const yy = String(d.getUTCFullYear() % 100).padStart(2, "0");
+  const MM = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const HH = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${yy}${MM}${dd}${HH}${mm}`;
+}
+
+/**
+ * Full previous UTC calendar day as inclusive author-date window tokens (00:00 … 23:59).
+ * @param {number} [daysAgo] default 1 = yesterday
+ */
+export function utcCalendarDayBoundsAsTokens(daysAgo = 1) {
+  const now = new Date();
+  const day = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysAgo, 12, 0, 0, 0)
+  );
+  const start = new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 0, 0, 0, 0));
+  const end = new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 23, 59, 0, 0));
+  return { startToken: formatYyMmDdHhMmUtc(start), endToken: formatYyMmDdHhMmUtc(end) };
+}

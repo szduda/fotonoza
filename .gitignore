@@ -6,3 +6,4 @@ dist
 .env
 .env.*
 !.env.example
+git-progress-payload.txt

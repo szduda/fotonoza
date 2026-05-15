@@ -2,11 +2,5 @@
   "framework": "astro",
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
-  "trailingSlash": true,
-  "crons": [
-    {
-      "path": "/api/cron/daily-progress/",
-      "schedule": "37 13 * * *"
-    }
-  ]
+  "trailingSlash": true
 }

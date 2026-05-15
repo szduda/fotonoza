@@ -1,0 +1,43 @@
+name: Progress cover PNG
+
+on:
+  pull_request:
+    paths:
+      - "src/content/progress/en/**/*.md"
+      - "public/progress/**"
+
+jobs:
+  cover-png-present:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: New English progress posts must include matching PNG in the PR
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "${BASE_SHA}"
+          added=$(git diff --name-only --diff-filter=A "${BASE_SHA}" "${HEAD_SHA}" -- 'src/content/progress/en/*.md' || true)
+          if [ -z "${added}" ]; then
+            echo "No newly added English progress posts in this PR; skipping PNG check."
+            exit 0
+          fi
+          all_changed=$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" || true)
+          missing=0
+          while IFS= read -r mdpath; do
+            [ -z "${mdpath}" ] && continue
+            slug=$(basename "${mdpath}" .md)
+            pngpath="public/progress/${slug}.png"
+            if echo "${all_changed}" | grep -Fxq "${pngpath}"; then
+              echo "OK: ${mdpath} → ${pngpath}"
+            else
+              echo "::error file=${mdpath}::Add ${pngpath} in this PR (cover for ${slug})."
+              missing=1
+            fi
+          done <<< "${added}"
+          exit "${missing}"

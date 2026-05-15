@@ -11,12 +11,10 @@
     "astro": "astro",
     "vercel-build": "npm run build",
     "backfill": "node scripts/backfill.mjs",
-    "cron:daily-progress": "node scripts/cronDailyWindow.mjs --push"
+    "progress:ci": "node scripts/ciProgress.mjs"
   },
   "dependencies": {
     "@cursor/sdk": "^1.0.12",
-    "dugite": "2.7.1",
-    "playwright": "^1.59.1",
     "astro": "^6.1.2",
     "dotenv": "^17.4.2"
   },

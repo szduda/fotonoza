@@ -3,12 +3,9 @@
  *   gitPayload: string;
  *   rangeStartToken: string;
  *   rangeEndToken: string;
- *   previewOrigin: string;
- *   screenshotHeadSha: string;
  * }} p
  */
 export function buildProgressPrompt(p) {
-  const shortSha = p.screenshotHeadSha.slice(0, 7);
   return `You are writing **one chapter** of an ongoing dev diary for **fotonoza** — the marketing site for a photo editor **web app** (React + Vite; source lives in repo fotonoza-app).
 
 ## The bigger story (carry this energy in every post)
@@ -19,7 +16,7 @@ Each post is a **beat in that longer arc**: curiosity, frustration, small wins, 
 
 Tone: **warm, human, a little playful** — story first, then facts. Emotions are welcome (excited, skeptical, relieved, obsessed). Avoid corporate marketing speak and dry bullet dumps. You can be opinionated about tradeoffs.
 
-The entry will ship on the static Astro site **fotonoza** with a screenshot from \`vite preview\` of the app **frozen at commit ${shortSha}** (newest commit in this batch). Describe the UI as it plausibly looks at that point in the story.
+The entry will ship on the static Astro site **fotonoza** with a **cover image** added later by the maintainer (PNG under \`public/progress/\`, URL in frontmatter). Describe the UI as it plausibly looks given the commits — readers will see the image alongside your words.
 
 ## Git activity (fotonoza-app) for this batch
 
@@ -33,27 +30,8 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
   "title": "short headline",
   "description": "one line for meta / listing",
   "pubDate": "ISO-8601 UTC instant string (metadata only — the site shows one human-facing date above the title; readers never see this raw string in the article)",
-  "body": "Markdown body only (no YAML frontmatter). Use ## headings sparingly; prefer flowing paragraphs with occasional emphasis.",
-  "screenshotPlan": {
-    "steps": [
-      { "type": "setViewport", "width": 1280, "height": 720 },
-      { "type": "goto", "path": "/" },
-      { "type": "waitForLoadState", "state": "networkidle" },
-      { "type": "screenshot", "fullPage": true }
-    ]
-  }
+  "body": "Markdown body only (no YAML frontmatter). Use ## headings sparingly; prefer flowing paragraphs with occasional emphasis."
 }
-
-### screenshotPlan rules
-
-- \`previewOrigin\` for the runner is: ${p.previewOrigin}
-- The runner builds and captures the app **at commit ${shortSha}** (newest in window); plan steps for **that** UI.
-- Each \`goto.path\` must start with \`/\` and is appended to that origin (e.g. \`/\` loads the app root).
-- Allowed step \`type\` values only: "goto", "waitForSelector", "waitForLoadState", "waitForTimeout", "setViewport", "screenshot".
-- **Last step must be** \`{ "type": "screenshot", "fullPage": true|false }\`.
-- Prefer stable selectors if you use \`waitForSelector\` (e.g. \`#root\`, \`main\`).
-- \`waitForLoadState.state\` is one of: "load", "domcontentloaded", "networkidle".
-- \`waitForTimeout.ms\` must be between 0 and 120000.
 
 ### Narrative checklist
 
@@ -67,5 +45,5 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
 - The page already shows a single publication line above the headline; **that** is the only date the reader needs. Your job is story and product, not a timeline recap.
 - The JSON \`pubDate\` field is still required (ISO string for the CMS) but must **not** be echoed or paraphrased inside title, description, or body.
 
-Do not include keys other than title, description, pubDate, body, screenshotPlan.`;
+Do not include keys other than title, description, pubDate, body.`;
 }

@@ -50,11 +50,12 @@ export async function writeProgressArtifacts(opts) {
     `rangeEnd: ${JSON.stringify(rangeEndToken)}`,
     `commitShas: ${JSON.stringify(commitShas.join(","))}`,
     "---",
-    "",
-    bodyMarkdown.trim(),
     ""
   ].join("\n");
 
-  await writeFile(mdPath, fm, "utf8");
+  const coverAlt = `Progress cover — ${slug}`;
+  const leadImg = `<img src=${JSON.stringify(imageWebPath)} alt=${JSON.stringify(coverAlt)} width="1280" loading="lazy" />\n\n`;
+
+  await writeFile(mdPath, `${fm}${leadImg}${bodyMarkdown.trim()}\n`, "utf8");
   return { mdPath };
 }

@@ -10,17 +10,13 @@ import { assertGeneratedPost } from "./validateGeneratedPost.mjs";
  *   gitPayload: string;
  *   rangeStartToken: string;
  *   rangeEndToken: string;
- *   previewOrigin: string;
- *   screenshotHeadSha: string;
  * }} opts
  */
 export async function generateProgressPostJson(opts) {
   const prompt = buildProgressPrompt({
     gitPayload: opts.gitPayload,
     rangeStartToken: opts.rangeStartToken,
-    rangeEndToken: opts.rangeEndToken,
-    previewOrigin: opts.previewOrigin,
-    screenshotHeadSha: opts.screenshotHeadSha
+    rangeEndToken: opts.rangeEndToken
   });
 
   try {

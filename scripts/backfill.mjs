@@ -7,8 +7,11 @@ import { runBackfillRange } from "./lib/backfillCore.mjs";
 function printUsage() {
   console.error(`Usage: npm run backfill -- <yyMMddHHmm> <yyMMddHHmm> [options]
 
+  Primary automation is GitHub Actions (workflow progress-generate.yml); this command is a local fallback.
+
   Inclusive UTC window on **author date** in fotonoza-app. Produces exactly one
-  progress post (markdown + PNG) under this repo.
+  progress post (English markdown + frontmatter) under this repo. Add the cover
+  PNG at public/progress/<slug>.png before merging (same slug as the .md file).
 
 Options:
   --app-root <path>   Override FOTONOZA_APP_ROOT
@@ -20,7 +23,6 @@ Environment:
   CURSOR_API_KEY      Required
   FOTONOZA_APP_ROOT   Optional path to fotonoza-app
   FOTONOZA_GIT_URL    Optional; with --push, HTTPS URL with PAT for this repo (git push + gh pr)
-  FOTONOZA_PREVIEW_URL  Default http://127.0.0.1:4173
 `);
 }
 
