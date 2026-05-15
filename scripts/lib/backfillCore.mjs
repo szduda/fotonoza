@@ -31,6 +31,76 @@ async function gitDiffCachedExitCode(root) {
 }
 
 /**
+ * @param {string} root
+ * @param {string} branch
+ */
+async function remoteBranchExists(root, branch) {
+  try {
+    const { stdout } = await execFileAsync("git", ["-C", root, "ls-remote", "--heads", "origin", branch], {
+      encoding: "utf8",
+      maxBuffer: 1024 * 1024
+    });
+    return Boolean(stdout.trim());
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Push (or update) `branch` on `origin`. Rebases onto existing remote tip when possible;
+ * on rebase conflict falls back to force-with-lease so CI can refresh bot-owned branches.
+ * @param {string} root
+ * @param {string} branch
+ */
+async function gitPushOriginBranch(root, branch) {
+  if (await remoteBranchExists(root, branch)) {
+    try {
+      await git(root, ["pull", "--rebase", "origin", branch]);
+      console.log(`[git] rebased onto origin/${branch}`);
+    } catch (e) {
+      const note = e instanceof Error ? e.message : String(e);
+      console.warn("[git] pull --rebase failed:", note);
+      try {
+        await git(root, ["rebase", "--abort"]);
+      } catch {
+        /* not in a rebase */
+      }
+      await git(root, ["push", "--force-with-lease", "-u", "origin", branch]);
+      console.warn(
+        "[git] pushed with --force-with-lease (rebase had conflicts or could not apply; remote-only commits on this branch may have been dropped)"
+      );
+      return;
+    }
+  }
+  await git(root, ["push", "-u", "origin", branch]);
+}
+
+/**
+ * @param {string} root
+ * @param {string} branch
+ * @param {string[]} ghArgs
+ * @param {NodeJS.ProcessEnv} ghEnv
+ */
+async function ghPrCreateIfMissing(root, branch, ghArgs, ghEnv) {
+  try {
+    const { stdout } = await execFileAsync(
+      "gh",
+      ["pr", "list", "--head", branch, "--state", "open", "--json", "number"],
+      { cwd: root, env: ghEnv, encoding: "utf8", maxBuffer: 1024 * 1024 }
+    );
+    const parsed = JSON.parse(stdout || "[]");
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      console.log(`[git] open PR already exists for branch ${branch}; skip gh pr create`);
+      return;
+    }
+  } catch (e) {
+    console.warn("[git] gh pr list failed; will still try gh pr create:", e instanceof Error ? e.message : e);
+  }
+  const { stdout } = await execFileAsync("gh", ghArgs, { cwd: root, env: ghEnv, maxBuffer: 1024 * 1024 });
+  console.log(stdout.trim());
+}
+
+/**
  * @param {{ fotonozaRoot: string; slug: string; flags: { commit: boolean; push: boolean; noPr: boolean } }} p
  */
 export async function maybeGitCommitPushPr(p) {
@@ -65,7 +135,7 @@ export async function maybeGitCommitPushPr(p) {
 
   const inGithubActions = process.env.GITHUB_ACTIONS === "true";
 
-  await git(fotonozaRoot, ["push", "-u", "origin", branch]);
+  await gitPushOriginBranch(fotonozaRoot, branch);
 
   if (flags.noPr) return;
 
@@ -75,25 +145,26 @@ export async function maybeGitCommitPushPr(p) {
     ghArgs.splice(2, 0, "--base", prBase);
   }
 
-  try {
-    const ghEnv = { ...process.env };
-    const prCreatePat = process.env.GH_PR_CREATE_TOKEN?.trim();
-    if (prCreatePat) {
-      ghEnv.GH_TOKEN = prCreatePat;
-      if (inGithubActions) {
-        console.log("[git] gh pr create: using GH_PR_CREATE_TOKEN (PAT) for GitHub API.");
-      }
+  const ghEnv = { ...process.env };
+  const prCreatePat = process.env.GH_PR_CREATE_TOKEN?.trim();
+  if (prCreatePat) {
+    ghEnv.GH_TOKEN = prCreatePat;
+    if (inGithubActions) {
+      console.log("[git] gh pr create: using GH_PR_CREATE_TOKEN (PAT) for GitHub API.");
     }
-    const { stdout } = await execFileAsync("gh", ghArgs, {
-      cwd: fotonozaRoot,
-      env: ghEnv
-    });
-    console.log(stdout.trim());
+  }
+
+  try {
+    await ghPrCreateIfMissing(fotonozaRoot, branch, ghArgs, ghEnv);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const stderr =
       e && typeof e === "object" && "stderr" in e ? String(/** @type {{ stderr?: unknown }} */ (e).stderr) : "";
     const detail = [msg, stderr].filter(Boolean).join("\n");
+    if (/already exists|pull request already exists|A pull request already/i.test(detail)) {
+      console.log("[git] gh pr create skipped (PR already exists):", detail);
+      return;
+    }
     if (inGithubActions) {
       console.error("[git] gh pr create failed in Actions:\n", detail);
       const hint =
