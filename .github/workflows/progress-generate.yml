@@ -2,8 +2,7 @@ name: Progress post (Cursor + PR)
 
 # Manual: optional range_start / range_end (yyMMddHHmm UTC, inclusive). Empty start → previous UTC day 00:00; empty end → next UTC day 00:00 (day after “today” in UTC). Schedule still uses full previous UTC day only.
 # Scheduled: previous UTC calendar day (scripts/ciProgress.mjs --yesterday-utc).
-# Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (clone app); FOTONOZA_GIT_URL (PAT push to this repo — required so
-# pushes from Actions can trigger pull_request workflows on the opened PR). GH_PR_CREATE_TOKEN optional if gh pr create is blocked.
+# Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (clone app). GH_PR_CREATE_TOKEN optional if gh pr create is blocked.
 
 on:
   schedule:
@@ -31,7 +30,6 @@ jobs:
       pull-requests: write
     env:
       FOTONOZA_APP_ROOT: ${{ github.workspace }}/fotonoza-app
-      FOTONOZA_GIT_URL: ${{ secrets.FOTONOZA_GIT_URL }}
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
       PROGRESS_PR_BASE: ${{ github.ref_name }}
@@ -67,15 +65,6 @@ jobs:
 
       - name: Use GITHUB_TOKEN for push
         run: git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-
-      - name: Require FOTONOZA_GIT_URL (PAT push so PR checks run on the opened PR)
-        env:
-          FOTONOZA_GIT_URL: ${{ secrets.FOTONOZA_GIT_URL }}
-        run: |
-          if [ -z "$FOTONOZA_GIT_URL" ]; then
-            echo "::error::Set repository secret FOTONOZA_GIT_URL to https://x-access-token:<PAT>@github.com/<org>/fotonoza.git with Contents: write (and Pull requests write if you use the same PAT for gh). Pushes must not use only GITHUB_TOKEN or GitHub will not run pull_request workflows on the new PR the same way."
-            exit 1
-          fi
 
       - name: Require CURSOR_API_KEY
         env:

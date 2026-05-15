@@ -1,23 +1,9 @@
 import { execFile } from "node:child_process";
-import { URL } from "node:url";
 import { promisify } from "node:util";
 import { parseYyMmDdHhMmUtc } from "./parseYyMmDdHhMm.mjs";
 import { runProgressPipeline } from "./runProgressPipeline.mjs";
 
 const execFileAsync = promisify(execFile);
-
-/**
- * PAT from `https://x-access-token:<pat>@host/...` for non-interactive `gh`.
- * @param {string} urlStr
- */
-function patFromXAccessTokenUrl(urlStr) {
-  try {
-    const u = new URL(urlStr);
-    return u.password || "";
-  } catch {
-    return "";
-  }
-}
 
 /**
  * @param {string} root
@@ -78,19 +64,8 @@ export async function maybeGitCommitPushPr(p) {
   }
 
   const inGithubActions = process.env.GITHUB_ACTIONS === "true";
-  // Pushes must use FOTONOZA_GIT_URL (PAT in HTTPS URL) in Actions so GitHub fires
-  // pull_request workflows on the opened PR; pushes with only GITHUB_TOKEN do not.
-  const siteGitUrl = process.env.FOTONOZA_GIT_URL?.trim() || "";
-  const pat = siteGitUrl ? patFromXAccessTokenUrl(siteGitUrl) : "";
-  if (pat && !process.env.GH_TOKEN) {
-    process.env.GH_TOKEN = pat;
-  }
 
-  if (siteGitUrl) {
-    await git(fotonozaRoot, ["push", siteGitUrl, `HEAD:refs/heads/${branch}`]);
-  } else {
-    await git(fotonozaRoot, ["push", "-u", "origin", branch]);
-  }
+  await git(fotonozaRoot, ["push", "-u", "origin", branch]);
 
   if (flags.noPr) return;
 

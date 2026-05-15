@@ -21,7 +21,6 @@ Options:
 Environment:
   CURSOR_API_KEY      Required
   FOTONOZA_APP_ROOT   Optional path to fotonoza-app
-  FOTONOZA_GIT_URL    Optional; with --push, HTTPS URL with PAT for this repo (git push + gh pr)
 `);
 }
 
