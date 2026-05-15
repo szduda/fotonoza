@@ -9,9 +9,8 @@ function printUsage() {
 
   Primary automation is GitHub Actions (workflow progress-generate.yml); this command is a local fallback.
 
-  Inclusive UTC window on **author date** in fotonoza-app. Produces exactly one
-  progress post (English markdown + frontmatter) under this repo. Add the cover
-  PNG at public/progress/<slug>.png before merging (same slug as the .md file).
+  Inclusive UTC window on **author date** in fotonoza-app. Produces one progress
+  post: English and Polish markdown under \`src/content/progress/en/\` and \`pl/\`.
 
 Options:
   --app-root <path>   Override FOTONOZA_APP_ROOT

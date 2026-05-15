@@ -128,8 +128,9 @@ async function main() {
   }
 
   const enMd = join(fotonozaRoot, "src", "content", "progress", "en", `${plan.slug}.md`);
-  if (existsSync(enMd)) {
-    const msg = `[ci-progress] English post already exists (${enMd}); skip generation and git.`;
+  const plMd = join(fotonozaRoot, "src", "content", "progress", "pl", `${plan.slug}.md`);
+  if (existsSync(enMd) && existsSync(plMd)) {
+    const msg = `[ci-progress] EN+PL posts already exist (${enMd}); skip generation and git.`;
     console.log(msg);
     appendStepSummary(
       `## Skipped (post exists)\n\n${msg}\n\n### Git payload (for review)\n\n\`\`\`text\n${plan.gitPayload.replace(/```/g, "\\`\\`\\`")}\n\`\`\`\n`

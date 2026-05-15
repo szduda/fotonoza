@@ -2,16 +2,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 /**
- * Writes English source under `src/content/progress/en/{slug}.md`.
- * Add `src/content/progress/pl/{slug}.md` with `locale: pl` and the same
- * `image`, `pubDate`, `range*`, `commitShas` when translating (do not use a
- * frontmatter key named `slug` — Astro reserves it for content ids).
+ * Writes `src/content/progress/en/{slug}.md` and `src/content/progress/pl/{slug}.md`.
+ * Do not use a frontmatter key named `slug` — Astro reserves it for content ids.
  */
 
 /**
  * @param {{
- *   fotonozaRoot: string;
- *   slug: string;
+ *   locale: string;
  *   title: string;
  *   description: string;
  *   pubDateIso: string;
@@ -20,6 +17,44 @@ import { dirname, join } from "node:path";
  *   rangeEndToken: string;
  *   commitShas: string[];
  *   bodyMarkdown: string;
+ *   leadImgAlt: string;
+ * }} p
+ */
+function buildMarkdownDoc(p) {
+  const fm = [
+    "---",
+    `locale: ${JSON.stringify(p.locale)}`,
+    `title: ${JSON.stringify(p.title)}`,
+    `description: ${JSON.stringify(p.description)}`,
+    `pubDate: ${JSON.stringify(p.pubDateIso)}`,
+    `image: ${JSON.stringify(p.imageWebPath)}`,
+    `rangeStart: ${JSON.stringify(p.rangeStartToken)}`,
+    `rangeEnd: ${JSON.stringify(p.rangeEndToken)}`,
+    `commitShas: ${JSON.stringify(p.commitShas.join(","))}`,
+    "---",
+    ""
+  ].join("\n");
+
+  const leadImg = `<img src=${JSON.stringify(p.imageWebPath)} alt=${JSON.stringify(p.leadImgAlt)} width="1280" loading="lazy" />\n\n`;
+
+  return `${fm}${leadImg}${p.bodyMarkdown.trim()}\n`;
+}
+
+/**
+ * @param {{
+ *   fotonozaRoot: string;
+ *   slug: string;
+ *   title: string;
+ *   description: string;
+ *   titlePl: string;
+ *   descriptionPl: string;
+ *   pubDateIso: string;
+ *   imageWebPath: string;
+ *   rangeStartToken: string;
+ *   rangeEndToken: string;
+ *   commitShas: string[];
+ *   bodyMarkdown: string;
+ *   bodyMarkdownPl: string;
  * }} opts
  */
 export async function writeProgressArtifacts(opts) {
@@ -28,34 +63,49 @@ export async function writeProgressArtifacts(opts) {
     slug,
     title,
     description,
+    titlePl,
+    descriptionPl,
     pubDateIso,
     imageWebPath,
     rangeStartToken,
     rangeEndToken,
     commitShas,
-    bodyMarkdown
+    bodyMarkdown,
+    bodyMarkdownPl
   } = opts;
 
-  const mdPath = join(fotonozaRoot, "src", "content", "progress", "en", `${slug}.md`);
-  await mkdir(dirname(mdPath), { recursive: true });
+  const enPath = join(fotonozaRoot, "src", "content", "progress", "en", `${slug}.md`);
+  const plPath = join(fotonozaRoot, "src", "content", "progress", "pl", `${slug}.md`);
+  await mkdir(dirname(enPath), { recursive: true });
+  await mkdir(dirname(plPath), { recursive: true });
 
-  const fm = [
-    "---",
-    `locale: "en"`,
-    `title: ${JSON.stringify(title)}`,
-    `description: ${JSON.stringify(description)}`,
-    `pubDate: ${JSON.stringify(pubDateIso)}`,
-    `image: ${JSON.stringify(imageWebPath)}`,
-    `rangeStart: ${JSON.stringify(rangeStartToken)}`,
-    `rangeEnd: ${JSON.stringify(rangeEndToken)}`,
-    `commitShas: ${JSON.stringify(commitShas.join(","))}`,
-    "---",
-    ""
-  ].join("\n");
+  const enDoc = buildMarkdownDoc({
+    locale: "en",
+    title,
+    description,
+    pubDateIso,
+    imageWebPath,
+    rangeStartToken,
+    rangeEndToken,
+    commitShas,
+    bodyMarkdown,
+    leadImgAlt: `Progress — ${title}`
+  });
 
-  const coverAlt = `Progress cover — ${slug}`;
-  const leadImg = `<img src=${JSON.stringify(imageWebPath)} alt=${JSON.stringify(coverAlt)} width="1280" loading="lazy" />\n\n`;
+  const plDoc = buildMarkdownDoc({
+    locale: "pl",
+    title: titlePl,
+    description: descriptionPl,
+    pubDateIso,
+    imageWebPath,
+    rangeStartToken,
+    rangeEndToken,
+    commitShas,
+    bodyMarkdown: bodyMarkdownPl,
+    leadImgAlt: `Postęp — ${titlePl}`
+  });
 
-  await writeFile(mdPath, `${fm}${leadImg}${bodyMarkdown.trim()}\n`, "utf8");
-  return { mdPath };
+  await writeFile(enPath, enDoc, "utf8");
+  await writeFile(plPath, plDoc, "utf8");
+  return { mdPath: enPath, plPath };
 }

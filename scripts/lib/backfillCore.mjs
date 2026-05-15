@@ -59,7 +59,7 @@ export async function maybeGitCommitPushPr(p) {
   const prBody =
     (process.env.PROGRESS_PR_BODY && process.env.PROGRESS_PR_BODY.trim()) ||
     (branchPrefix.includes("ci")
-      ? `Automated progress post \`${slug}\`.\n\n**Before merge:** add the cover PNG at \`public/progress/${slug}.png\` (same path as in the post). The PR check will fail until that file is in the diff.`
+      ? `Automated progress post \`${slug}\` (English and Polish markdown under \`src/content/progress/\`).`
       : `Automated backfill post \`${slug}\`.`);
   console.log(`[git] branch ${branch}`);
   await git(fotonozaRoot, ["checkout", "-B", branch]);
@@ -78,10 +78,9 @@ export async function maybeGitCommitPushPr(p) {
   }
 
   const inGithubActions = process.env.GITHUB_ACTIONS === "true";
-  // In CI, always push to `origin` (workflow sets URL + GITHUB_TOKEN). Ignore
-  // FOTONOZA_GIT_URL here so a PAT-only marketing URL secret does not redirect
-  // the push away from the token `gh` uses to open the PR on this repo.
-  const siteGitUrl = inGithubActions ? "" : process.env.FOTONOZA_GIT_URL?.trim() || "";
+  // Pushes must use FOTONOZA_GIT_URL (PAT in HTTPS URL) in Actions so GitHub fires
+  // pull_request workflows on the opened PR; pushes with only GITHUB_TOKEN do not.
+  const siteGitUrl = process.env.FOTONOZA_GIT_URL?.trim() || "";
   const pat = siteGitUrl ? patFromXAccessTokenUrl(siteGitUrl) : "";
   if (pat && !process.env.GH_TOKEN) {
     process.env.GH_TOKEN = pat;

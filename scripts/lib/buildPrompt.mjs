@@ -16,7 +16,7 @@ Each post is a **beat in that longer arc**: curiosity, frustration, small wins, 
 
 Tone: **warm, human, a little playful** — story first, then facts. Emotions are welcome (excited, skeptical, relieved, obsessed). Avoid corporate marketing speak and dry bullet dumps. You can be opinionated about tradeoffs.
 
-The entry will ship on the static Astro site **fotonoza** with a **cover image** added later by the maintainer (PNG under \`public/progress/\`, URL in frontmatter). Describe the UI as it plausibly looks given the commits — readers will see the image alongside your words.
+The entry will ship on the static Astro site **fotonoza** in **English and Polish** (\`en\` and \`pl\` sources). Frontmatter \`image:\` uses a short URL: \`/progress/{coverWord}-{5hex}.png\` where \`{5hex}\` is fixed by the pipeline from the commit set — you supply **coverWord** only (one evocative English word, lowercase letters a–z, 2–32 chars, no spaces). Describe the UI as it plausibly looks given the commits.
 
 ## Git activity (fotonoza-app) for this batch
 
@@ -27,10 +27,14 @@ ${p.gitPayload}
 Reply with **only** a single JSON object (no markdown outside the JSON). The JSON must match this shape exactly in structure and types:
 
 {
-  "title": "short headline",
-  "description": "one line for meta / listing",
+  "title": "short headline (English)",
+  "description": "one line for meta / listing (English)",
   "pubDate": "ISO-8601 UTC instant string (metadata only — the site shows one human-facing date above the title; readers never see this raw string in the article)",
-  "body": "Markdown body only (no YAML frontmatter). Use ## headings sparingly; prefer flowing paragraphs with occasional emphasis."
+  "body": "Markdown body only in English (no YAML frontmatter). Use ## headings sparingly; prefer flowing paragraphs with occasional emphasis.",
+  "coverWord": "one lowercase English word a-z only, 2-32 letters, evoking this chapter for the \`image:\` basename (e.g. timeline, export, palette)",
+  "titlePl": "Polish headline (same beat as title)",
+  "descriptionPl": "Polish one-line description",
+  "bodyPl": "Polish Markdown body — same structure and intent as body; no YAML; same date rules: no calendar anchors in text."
 }
 
 ### Narrative checklist
@@ -43,7 +47,7 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
 
 - **Do not** put dates, times, or ranges in **title**, **description**, or **body** — no calendar phrases (“on May 10…”), no week labels tied to a clock, no **ISO-8601** strings, no **yyMMddHHmm** tokens, no “between timestamps … UTC”, no committer/author timestamps, and no “last Tuesday”-style anchors.
 - The page already shows a single publication line above the headline; **that** is the only date the reader needs. Your job is story and product, not a timeline recap.
-- The JSON \`pubDate\` field is still required (ISO string for the CMS) but must **not** be echoed or paraphrased inside title, description, or body.
+- The JSON \`pubDate\` field is still required (ISO string for the CMS) but must **not** be echoed or paraphrased inside title, description, or body — **nor** in titlePl, descriptionPl, or bodyPl.
 
-Do not include keys other than title, description, pubDate, body.`;
+Do not include keys other than title, description, pubDate, body, coverWord, titlePl, descriptionPl, bodyPl.`;
 }

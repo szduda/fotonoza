@@ -3,7 +3,7 @@ import {
   listCommitsByAuthorDateInRange
 } from "./gitCommitsInRange.mjs";
 import { generateProgressPostJson } from "./generateWithCursor.mjs";
-import { makeProgressSlug } from "./slug.mjs";
+import { makeCoverImageFileName, makeProgressSlug } from "./slug.mjs";
 import { writeProgressArtifacts } from "./writeProgressDoc.mjs";
 
 /**
@@ -88,29 +88,29 @@ export async function runProgressPipelineFromPlan(plan, opts) {
   });
   console.log(`[pipeline] Cursor run id: ${runId}`);
 
-  const imageWebPath = `/progress/${slug}.png`;
-  const coverPngRelativePath = `public/progress/${slug}.png`;
-  const { mdPath } = await writeProgressArtifacts({
+  const imageFile = makeCoverImageFileName(post.coverWord.trim(), shas);
+  const imageWebPath = `/progress/${imageFile}`;
+  const { mdPath, plPath } = await writeProgressArtifacts({
     fotonozaRoot: opts.fotonozaRoot,
     slug,
     title: post.title,
     description: post.description,
+    titlePl: post.titlePl,
+    descriptionPl: post.descriptionPl,
     pubDateIso: post.pubDate,
     imageWebPath,
     rangeStartToken,
     rangeEndToken,
     commitShas: shas,
-    bodyMarkdown: post.body
+    bodyMarkdown: post.body,
+    bodyMarkdownPl: post.bodyPl
   });
 
-  console.log(
-    `[pipeline] wrote ${mdPath}; add cover image at ${coverPngRelativePath} (referenced in frontmatter and body)`
-  );
+  console.log(`[pipeline] wrote ${mdPath} and ${plPath}`);
 
   return {
     ok: true,
     slug,
-    coverPngRelativePath,
     mdPath,
     runId,
     shas,
@@ -119,7 +119,7 @@ export async function runProgressPipelineFromPlan(plan, opts) {
 }
 
 /**
- * Range → markdown under fotonoza; cover PNG is added manually in \`public/progress/{slug}.png\`.
+ * Range → markdown under fotonoza; `image:` points at `/progress/{word}-{5hex}.png` (asset optional).
  *
  * @param {{
  *   apiKey: string;
@@ -131,7 +131,7 @@ export async function runProgressPipelineFromPlan(plan, opts) {
  *   endUtc: Date;
  * }} opts
  * @returns {Promise<
- *   | { ok: true; slug: string; coverPngRelativePath: string; mdPath: string; runId: string; shas: string[]; gitPayload: string }
+ *   | { ok: true; slug: string; mdPath: string; runId: string; shas: string[]; gitPayload: string }
  *   | { ok: false; code: "NO_COMMITS"; message: string }
  * >}
  */
