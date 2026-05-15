@@ -3,11 +3,11 @@ name: Progress post (Cursor + PR)
 # Manual: Actions → this workflow → Run workflow (optional yyMMddHHmm range).
 # Scheduled: previous UTC calendar day (scripts/ciProgress.mjs --yesterday-utc).
 # Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (private fotonoza-app clone URL with PAT, see .env.example).
+# PRs: PROGRESS_PR_BASE + GH_REPO help `gh pr create`; CI ignores FOTONOZA_GIT_URL for push (uses origin + GITHUB_TOKEN).
 
 on:
   schedule:
-    # Daily 06:45 UTC — edit to taste
-    - cron: "45 6 * * *"
+    - cron: "37 7 * * *"
   workflow_dispatch:
     inputs:
       range_start:
@@ -32,8 +32,10 @@ jobs:
     env:
       FOTONOZA_APP_ROOT: ${{ github.workspace }}/fotonoza-app
       GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      PROGRESS_PR_BASE: ${{ github.ref_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -48,7 +50,7 @@ jobs:
           fi
           git clone "${FOTONOZA_APP_GIT_URL}" "${GITHUB_WORKSPACE}/fotonoza-app"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           cache: "npm"
@@ -91,7 +93,7 @@ jobs:
 
       - name: Upload git payload artifact
         if: always() && hashFiles('git-progress-payload.txt') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: progress-git-payload
           path: git-progress-payload.txt

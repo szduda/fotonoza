@@ -77,7 +77,11 @@ export async function maybeGitCommitPushPr(p) {
     return;
   }
 
-  const siteGitUrl = process.env.FOTONOZA_GIT_URL?.trim();
+  const inGithubActions = process.env.GITHUB_ACTIONS === "true";
+  // In CI, always push to `origin` (workflow sets URL + GITHUB_TOKEN). Ignore
+  // FOTONOZA_GIT_URL here so a PAT-only marketing URL secret does not redirect
+  // the push away from the token `gh` uses to open the PR on this repo.
+  const siteGitUrl = inGithubActions ? "" : process.env.FOTONOZA_GIT_URL?.trim() || "";
   const pat = siteGitUrl ? patFromXAccessTokenUrl(siteGitUrl) : "";
   if (pat && !process.env.GH_TOKEN) {
     process.env.GH_TOKEN = pat;
@@ -90,25 +94,29 @@ export async function maybeGitCommitPushPr(p) {
   }
 
   if (flags.noPr) return;
+
+  const prBase = process.env.PROGRESS_PR_BASE?.trim();
+  const ghArgs = ["pr", "create", "--head", branch, "--title", `Progress: ${slug}`, "--body", prBody];
+  if (prBase) {
+    ghArgs.splice(2, 0, "--base", prBase);
+  }
+
   try {
-    const { stdout } = await execFileAsync(
-      "gh",
-      [
-        "pr",
-        "create",
-        "--head",
-        branch,
-        "--title",
-        `Progress: ${slug}`,
-        "--body",
-        prBody
-      ],
-      { cwd: fotonozaRoot }
-    );
+    const { stdout } = await execFileAsync("gh", ghArgs, {
+      cwd: fotonozaRoot,
+      env: { ...process.env }
+    });
     console.log(stdout.trim());
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", msg);
+    const stderr =
+      e && typeof e === "object" && "stderr" in e ? String(/** @type {{ stderr?: unknown }} */ (e).stderr) : "";
+    const detail = [msg, stderr].filter(Boolean).join("\n");
+    if (inGithubActions) {
+      console.error("[git] gh pr create failed in Actions:\n", detail);
+      throw new Error(`gh pr create failed: ${detail}`);
+    }
+    console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", detail);
   }
 }
 
