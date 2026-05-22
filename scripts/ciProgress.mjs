@@ -14,8 +14,12 @@ import {
   utcNextCalendarDayMidnight,
   utcPreviousCalendarDayMidnight
 } from "./lib/parseYyMmDdHhMm.mjs";
-import { getFotonozaRoot, resolveAppRoot } from "./lib/paths.mjs";
+import { getFotonozaRoot } from "./lib/paths.mjs";
 import { planProgressRange, runProgressPipelineFromPlan } from "./lib/runProgressPipeline.mjs";
+
+const PROGRESS_BRANCH_PREFIX = "progress/ci-";
+const PROGRESS_PR_BASE = "master";
+const FOTONOZA_APP_DIR = "fotonoza-app";
 
 function printUsage() {
   console.error(`Usage:
@@ -27,8 +31,7 @@ Omit either token (pass "" "") to apply defaults (UTC):
   end empty   → (today + 1 calendar day) at 00:00
 
 Environment:
-  CURSOR_API_KEY     Required
-  FOTONOZA_APP_ROOT  Required in CI (path to fotonoza-app checkout)
+  CURSOR_API_KEY     Required (GitHub Actions secret or local .env)
 `);
 }
 
@@ -60,19 +63,26 @@ function appendStepSummary(text) {
 }
 
 function argvFlags(argv) {
-  const out = { yesterdayUtc: false, appRoot: undefined };
+  const out = { yesterdayUtc: false };
   const rest = [];
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--yesterday-utc") out.yesterdayUtc = true;
-    else if (a === "--app-root") {
-      out.appRoot = argv[++i];
-      if (!out.appRoot) throw new Error("--app-root needs a value");
-    } else if (a.startsWith("-")) {
+    else if (a.startsWith("-")) {
       throw new Error(`Unknown flag: ${a}`);
     } else rest.push(a);
   }
   return { ...out, positional: rest };
+}
+
+/** @param {string} slug */
+function ciCommitMessage(slug) {
+  return `progress: ci ${slug}`;
+}
+
+/** @param {string} slug */
+function ciPrBody(slug) {
+  return `Automated progress post \`${slug}\` (English and Polish markdown under \`src/content/progress/\`).`;
 }
 
 async function main() {
@@ -97,11 +107,12 @@ async function main() {
     process.exit(1);
   }
 
-  process.env.PROGRESS_BRANCH_PREFIX =
-    process.env.PROGRESS_BRANCH_PREFIX?.trim() || "progress/ci-";
-
   const fotonozaRoot = getFotonozaRoot();
-  const appRoot = resolveAppRoot(flags.appRoot);
+  const appRoot = join(fotonozaRoot, FOTONOZA_APP_DIR);
+  if (!existsSync(join(appRoot, "package.json"))) {
+    console.error(`Missing fotonoza-app checkout at ${appRoot} (clone into repo root before running CI progress).`);
+    process.exit(1);
+  }
 
   const startUtc = parseYyMmDdHhMmUtc(startToken);
   const endUtc = parseYyMmDdHhMmUtc(endToken);
@@ -152,7 +163,13 @@ async function main() {
   await maybeGitCommitPushPr({
     fotonozaRoot,
     slug: plan.slug,
-    flags: { commit: true, push: true, noPr: false }
+    flags: { commit: true, push: true, noPr: false },
+    git: {
+      branchPrefix: PROGRESS_BRANCH_PREFIX,
+      commitMsg: ciCommitMessage(plan.slug),
+      prBody: ciPrBody(plan.slug),
+      prBase: PROGRESS_PR_BASE
+    }
   });
 
   console.log(`[ci-progress] done ${plan.slug}`);

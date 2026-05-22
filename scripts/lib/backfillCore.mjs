@@ -167,10 +167,9 @@ export async function maybeGitCommitPushPr(p) {
     }
     if (inGithubActions) {
       console.error("[git] gh pr create failed in Actions:\n", detail);
-      const hint =
-        /not permitted to create or approve pull requests/i.test(detail)
-          ? " Enable: repo Settings → Actions → General → Workflow permissions → “Read and write permissions” and check “Allow GitHub Actions to create and approve pull requests”. Or add repository secret GH_PR_CREATE_TOKEN (PAT with Pull requests: Write on this repo) for gh only."
-          : "";
+      const hint = /not permitted to create or approve pull requests/i.test(detail)
+        ? ' Enable: repo Settings → Actions → General → Workflow permissions → "Read and write permissions" and check "Allow GitHub Actions to create and approve pull requests".'
+        : "";
       throw new Error(`gh pr create failed: ${detail}${hint}`);
     }
     console.warn("[git] gh pr create failed (install gh and auth, or pass --no-pr):", detail);
