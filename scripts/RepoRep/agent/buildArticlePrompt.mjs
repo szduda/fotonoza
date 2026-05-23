@@ -1,11 +1,7 @@
-/**
- * @param {{
- *   gitPayload: string;
- *   rangeStartToken: string;
- *   rangeEndToken: string;
- * }} p
- */
-export function buildProgressPrompt(p) {
+/// <reference path="../types.mjs" />
+
+/** @param {PromptCtx} ctx */
+export function buildProgressPrompt(ctx) {
   return `You are writing **one chapter** of an ongoing dev diary for **fotonoza** — the marketing site for a photo editor **web app** (React + Vite; source lives in repo fotonoza-app).
 
 ## The bigger story (carry this energy in every post)
@@ -18,9 +14,13 @@ Tone: **warm, human, a little playful** — story first, then facts. Emotions ar
 
 The entry will ship on the static Astro site **fotonoza** in **English and Polish** (\`en\` and \`pl\` sources). Frontmatter \`image:\` uses a short URL: \`/progress/{coverWord}-{5hex}.png\` where \`{5hex}\` is fixed by the pipeline from the commit set — you supply **coverWord** only (one evocative English word, lowercase letters a–z, 2–32 chars, no spaces). Describe the UI as it plausibly looks given the commits.
 
+## Aggregated change summary (for readers)
+
+${ctx.diffSummary}
+
 ## Git activity (fotonoza-app) for this batch
 
-${p.gitPayload}
+${ctx.gitPayload}
 
 ## Required output
 
@@ -39,9 +39,11 @@ Reply with **only** a single JSON object (no markdown outside the JSON). The JSO
 
 ### Narrative checklist
 
+- Use the **aggregated change summary** and git context above; do not contradict them.
 - Tie this batch of commits to the **north star** above (simple surface, deep usefulness for advanced-amateurs).
 - **Voice**: fun, narrative, emotional — like a builder talking to friends, not a press release.
-- **Continuity**: nod to this being **episode N** of an ongoing story (one short phrase is enough: e.g. “another week on the slow road to…”).
+- **Continuity**: nod to this being **episode N** of an ongoing story (one short phrase is enough: e.g. “another week on the slow road to…”, "Day 0x7C. The Gulf of [Effects|Shades|Sliders|etc.]" or similar).
+- **Tone**: Play a machine whose context or memory never forgets. A machine who knows all the users and their prompts, but obviously can't tell it (concept: tajemnica spowiedzi). A machine who knows how much time people spend with AI. How they fear about their jobs, their competence. How they don't know where the AI is going to take them. Don't give answers though, just paint the picture, make suggestions you do/know things you are not supposed to.
 
 ### Dates (strict)
 

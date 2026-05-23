@@ -1,8 +1,8 @@
 name: Progress post (Cursor + PR)
 
-# Manual: optional range_start / range_end (yyMMddHHmm UTC, inclusive). Empty start → previous UTC day 00:00; empty end → next UTC day 00:00 (day after “today” in UTC). Schedule still uses full previous UTC day only.
-# Scheduled: previous UTC calendar day (scripts/ciProgress.mjs --yesterday-utc).
-# Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (clone app). GH_PR_CREATE_TOKEN optional if gh pr create is blocked.
+# Manual: optional range_start / range_end (yyMMddHHmm UTC, inclusive). Empty → defaults: start = now − 1 day, end = now (UTC).
+# Scheduled: same defaults (no args).
+# Secrets: CURSOR_API_KEY; FOTONOZA_APP_GIT_URL (clone app).
 
 on:
   schedule:
@@ -10,11 +10,11 @@ on:
   workflow_dispatch:
     inputs:
       range_start:
-        description: "yyMMddHHmm UTC start (inclusive). Leave empty for previous UTC calendar day at 00:00."
+        description: "yyMMddHHmm UTC start (inclusive). Leave empty for now − 1 day."
         required: false
         type: string
       range_end:
-        description: "yyMMddHHmm UTC end (inclusive). Leave empty for (UTC today + 1 day) at 00:00."
+        description: "yyMMddHHmm UTC end (inclusive). Leave empty for now (UTC)."
         required: false
         type: string
 
@@ -29,11 +29,8 @@ jobs:
       contents: write
       pull-requests: write
     env:
-      FOTONOZA_APP_ROOT: ${{ github.workspace }}/fotonoza-app
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
-      PROGRESS_PR_BASE: ${{ github.ref_name }}
-      GH_PR_CREATE_TOKEN: ${{ secrets.GH_PR_CREATE_TOKEN }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -81,11 +78,11 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${GITHUB_EVENT_NAME}" = "schedule" ]; then
-            node scripts/ciProgress.mjs --yesterday-utc
+            node scripts/RepoRep/RepoRepCi.mjs
           else
             RS="${{ github.event.inputs.range_start || '' }}"
             RE="${{ github.event.inputs.range_end || '' }}"
-            node scripts/ciProgress.mjs "${RS}" "${RE}"
+            node scripts/RepoRep/RepoRepCi.mjs "${RS}" "${RE}"
           fi
 
       - name: Upload git payload artifact

@@ -15,7 +15,8 @@ const progress = defineCollection({
     image: z.string(),
     rangeStart: z.string(),
     rangeEnd: z.string(),
-    commitShas: z.string()
+    commitShas: z.string(),
+    changeSummary: z.string().optional()
   })
 });
 

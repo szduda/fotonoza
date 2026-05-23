@@ -14,7 +14,7 @@ function isEscapedQuote(str, quoteIdx) {
  * @param {string} text
  * @returns {string | null}
  */
-export function sliceFirstJsonObject(text) {
+function sliceFirstJsonObject(text) {
   const start = text.indexOf("{");
   if (start < 0) return null;
 
@@ -75,7 +75,7 @@ export function extractJsonFromModelText(text) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     throw new Error(
-      `${msg}\n--- JSON head ---\n${sliced.slice(0, 400)}\n--- JSON tail ---\n${sliced.slice(-400)}`
+      `${msg}\n--- JSON head ---\n${sliced.slice(0, 400)}\n--- JSON tail ---\n${sliced.slice(-400)}`,
     );
   }
 }

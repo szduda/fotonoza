@@ -1,6 +1,6 @@
 ---
 name: Landing progress posts CI
-overview: In `fotonoza`, scheduled CI and local backfill use the Cursor TypeScript SDK (`@cursor/sdk`) with `CURSOR_API_KEY` so generation draws from your Cursor plan/quota—not OpenAI/Anthropic keys. Each automated run still opens a PR; backfill stays `npm run backfill yyMMddHHmm yyMMddHHmm` on your machine.
+overview: In `fotonoza`, scheduled CI and local RepoRep use the Cursor TypeScript SDK (`@cursor/sdk`) with `CURSOR_API_KEY` so generation draws from your Cursor plan/quota—not OpenAI/Anthropic keys. Each automated run still opens a PR; local RepoRep stays `npm run reporep:local yyMMddHHmm yyMMddHHmm` on your machine.
 todos:
   - id: astro-collection
     content: "In fotonoza: Astro content collection + listing; frontmatter image for screenshot"
@@ -14,8 +14,8 @@ todos:
   - id: gha-workflow
     content: "fotonoza/.github/workflows: schedule (+ optional dispatch); CURSOR_API_KEY secret; branch + PR only"
     status: pending
-  - id: backfill-local
-    content: package.json backfill + scripts/backfill.mjs; same generator as CI; CURSOR_API_KEY in .env
+  - id: RepoRep-local
+    content: package.json reporep:local + scripts/RepoRep/RepoRepLocal.mjs; same generator as CI; CURSOR_API_KEY in .env
     status: pending
   - id: setup-docs
     content: "README: Cursor dashboard key, quota/rate-limit note, repos layout, Playwright, gh, date semantics"
@@ -45,7 +45,7 @@ isProject: false
 - **Landing / marketing site repo name: `fotonoza`** (Astro, static, Vercel on merge to default branch).
 - **App repo**: [`fotonoza-app`](file:///media/szd/DATA/Projects/Dev/fotonoza-app) (clone in CI or locally next to `fotonoza`).
 - **Quality gate**: automated runs **never commit directly to the default branch** (`master` or `main`—match your repo). Each finished job **pushes a branch and opens one PR**; **one required approval** (you as owner) before merge → Vercel deploys as today.
-- **Backfill** is **manual on your machine**: `npm run backfill yyMMddHHmm yyMMddHHmm` — **inclusive commit-date range**, **each invocation produces exactly one post** (no CI backfill batches).
+- **RepoRep** is **manual on your machine**: `npm run reporep:local yyMMddHHmm yyMMddHHmm` — **inclusive commit-date range**, **each invocation produces exactly one post** (no CI RepoRep batches). CI / scheduled runs use `npm run reporep:ci` (`scripts/RepoRep/RepoRepCi.mjs`).
 
 ## Text generation: Cursor quota (not third-party LLM keys)
 
@@ -53,10 +53,10 @@ isProject: false
 - **Auth**: [`CURSOR_API_KEY`](https://cursor.com/dashboard/cloud-agents) (user key from Cursor dashboard or a **team service account** key if you prefer CI isolation). Store as **`CURSOR_API_KEY`** in GitHub Actions secrets and in local `.env` (gitignored). **No OpenAI/Anthropic/etc. keys** required for the narrative step.
 - **Runtime choice**:
   - **GitHub Actions**: after checkout/clone, run a small Node script with **`local: { cwd }`** pointing at the workspace root that contains both repos (or `fotonoza` root with paths to git data). The agent runs **on the runner** but **model usage is billed to your Cursor account** via the API key—this matches “use my Cursor quota.”
-  - **Local backfill**: same script, same key in `.env`; natural fit for `Agent.prompt` + `local.cwd`.
+  - **Local RepoRep** (`reporep:local`): same pipeline modules, same key in `.env`; natural fit for `Agent.prompt` + `local.cwd`.
 - **Optional**: **`cloud: { repos }`** cloud agents for fire-and-forget or long runs—also keyed off `CURSOR_API_KEY`; use only if you explicitly want Cursor-hosted clones instead of Actions checkout. Default plan: **local runtime on the runner / your laptop** for predictable Playwright + `vite preview` in the same process tree.
 - **Models**: follow SDK guidance (e.g. `composer-2` or `Cursor.models.list()`); IDs can change—pin via one config constant you update rarely.
-- **Quota / ops**: daily job + backfill loops consume **Cursor API/agent usage**; batch backfill manually over days if you hit limits. Log `run.id` / `agentId` from the SDK for support and retries (`CursorAgentError`, `result.status === "error"` per SDK docs).
+- **Quota / ops**: daily job + RepoRep loops consume **Cursor API/agent usage**; batch RepoRep manually over days if you hit limits. Log `run.id` / `agentId` from the SDK for support and retries (`CursorAgentError`, `result.status === "error"` per SDK docs).
 
 ## Architecture
 
@@ -109,26 +109,26 @@ flowchart TB
 - If **`fotonoza-app`** is private: fine-scoped PAT to clone (unchanged from earlier plan intent).
 - **`GITHUB_TOKEN`** or PAT for **push branch + open PR** if default permissions are insufficient.
 
-## Local backfill (`npm run backfill yyMMddHHmm yyMMddHHmm`)
+## Local RepoRep (`npm run reporep:local yyMMddHHmm yyMMddHHmm`)
 
 - **Semantics**: two arguments are **range endpoints** in format **`yyMMddHHmm`** (10 digits each: year 2, month 2, day 2, hour 2, minute 2). Parse into absolute instants (document **timezone**: recommend **UTC** end-to-end and state that in README to match `git` timestamps, or use **local TZ** but then document clearly).
 - **Selection**: in `fotonoza-app`, select commits whose **author date** (or committer date—pick one, document) falls **in the closed interval** `[start, end]`. If none: exit non-zero with message.
 - **One post**: build the single group → **same Cursor SDK + Playwright pipeline as CI** → write one markdown + one PNG into your local **`fotonoza`** checkout.
-- **Git**: either instruct to commit on a branch and run `gh pr create`, or have the script do **branch + commit + push + PR** when `gh` is authenticated (same naming convention as CI).
-- **No** date-range backfill in GitHub Actions—only this local command for historical windows.
+- **Git**: local `reporep:local` writes markdown only; use `reporep:ci` (or manual branch + `gh pr create`) when you want commit/push/PR.
+- **No** date-range RepoRep in GitHub Actions—only `reporep:local` on your machine for historical windows. Scheduled / manual CI runs use `reporep:ci`.
 
 ### Local setup (document in `fotonoza` README)
 
 - **Node** version aligned with Astro project + **`@cursor/sdk`** dependency.
-- **Directory layout**: e.g. sibling folders `.../fotonoza` and `.../fotonoza-app`, or env **`FOTONOZA_APP_ROOT`** pointing at the app clone.
+- **Directory layout**: sibling folders `.../fotonoza` and `.../fotonoza-app` (local `reporep:local` always resolves `../fotonoza-app`); CI clones `fotonoza-app` into the repo root.
 - **Env**: **`CURSOR_API_KEY`** in `.env` (gitignored); optional **`BASE_URL`** override for preview port.
 - **Playwright**: `npx playwright install chromium` (or `install --with-deps` on Linux) once per machine.
 - **GitHub CLI** (optional but recommended): `gh auth login` for `gh pr create` from the script.
-- **Example**: `npm run backfill 2401011200 2401151800` → one post covering commits in that window (exact interpretation per UTC/local doc).
+- **Example**: `npm run reporep:local 2401011200 2401151800` → one post covering commits in that window (exact interpretation per UTC/local doc).
 
 ## Shared implementation note
 
-- Factor **“range → artifacts”** into a module used by **both** the GitHub Action entrypoint and **`scripts/backfill.mjs`** so CI and local backfill do not diverge.
+- Factor **“range → artifacts”** into shared modules under `scripts/RepoRep/` used by **both** `scripts/RepoRep/RepoRepCi.mjs` and **`scripts/RepoRep/RepoRepLocal.mjs`** so CI and local RepoRep do not diverge.
 
 ## Security
 
@@ -143,8 +143,8 @@ flowchart TB
 
 - **PR noise**: one scheduled PR per day when there are commits; if empty, skip opening PR.
 - **State file**: only advance on merged PRs; avoid updating `lastProcessedSha` on default branch outside merged automation PRs.
-- **Backfill overlap**: running ranges that overlap may duplicate topics—slug from date range + commit set hash to reduce collisions.
-- **Cursor limits**: backfill many windows in one sitting may hit rate limits—space runs out or add retries per SDK `isRetryable`.
+- **RepoRep overlap**: running ranges that overlap may duplicate topics—slug from date range + commit set hash to reduce collisions.
+- **Cursor limits**: RepoRep many windows in one sitting may hit rate limits—space runs out or add retries per SDK `isRetryable`.
 
 ## Optional in `fotonoza-app`
 

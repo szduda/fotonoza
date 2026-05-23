@@ -10,12 +10,14 @@
     "preview": "astro preview",
     "astro": "astro",
     "vercel-build": "npm run build",
-    "backfill": "node scripts/backfill.mjs",
-    "progress:ci": "node scripts/ciProgress.mjs"
+    "reporep:local": "node scripts/RepoRep/RepoRepLocal.mjs",
+    "reporep:ci": "node scripts/RepoRep/RepoRepCi.mjs"
   },
   "dependencies": {
     "@cursor/sdk": "^1.0.12",
+    "@date-fns/utc": "^2.1.1",
     "astro": "^6.1.2",
+    "date-fns": "^4.3.0",
     "dotenv": "^17.4.2"
   },
   "devDependencies": {
